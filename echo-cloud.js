@@ -1,4 +1,4 @@
-/* ECHO v4: version-checked, opt-in cross-device sync.
+/* ECHO v4.3: version-checked cloud sync with shared GAIA / ORBIT login.
    Public API key + Supabase RLS; never put secret API keys in the frontend. */
 (() => {
  'use strict';
@@ -6,15 +6,15 @@
  const $=id=>document.getElementById(id);
  const app=window.ECHO;
  const status=$('cloudState'), signIn=$('cloudSignInActions'), account=$('cloudAccountActions');
- const emailButton=$('cloudEmailButton'),passwordButton=$('cloudPasswordLogin'),setPasswordButton=$('cloudSetPassword'),uploadButton=$('cloudUpload'),downloadButton=$('cloudDownload');
+ const recheckButton=$('cloudRecheck'),uploadButton=$('cloudUpload'),downloadButton=$('cloudDownload');
  const pauseButton=$('cloudPause'),undoButton=$('cloudUndo'),logoutButton=$('cloudSignOut'),lastSync=$('cloudLastSync');
- const buttons=[emailButton,passwordButton,setPasswordButton,uploadButton,downloadButton,pauseButton,undoButton,logoutButton].filter(Boolean);
+ const buttons=[recheckButton,uploadButton,downloadButton,pauseButton,undoButton,logoutButton].filter(Boolean);
  if(!app||!status||!signIn||!account)return;
  function report(text){status.textContent=text}
  if(!window.supabase?.createClient){report('Cloud library could not load. ECHO still saves locally.');return}
- const db=window.supabase.createClient('https://xkghwqticokunxuqwyrh.supabase.co',
-  "sb_publishable_n1wbErN9-MK8VtPMQgXgFw_KKIfFKEV",
-  {auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+ const db=window.supabase.createClient('https://zdurujqwhxqrwbhwzzxg.supabase.co',
+  "sb_publishable_Xa0DTx_PbvtynbiQN6_xNQ_l1D55vzK",
+  {auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,flowType:'pkce'}});
  let user=null,enabled=false,checking=false,writing=false,dirty=false,version=null,baseline=null,pendingTimer=null,lastUserId=null;
  const modeKey=id=>'echo-cloud-auto:'+id;
  const metaKey=id=>'echo-cloud-meta:'+id;
@@ -37,8 +37,8 @@
    if(undoButton)undoButton.disabled=!user||!localStorage.getItem(safetyKey(user.id));
    if(pauseButton){pauseButton.textContent=enabled?'Pause auto-sync':'Resume after manual transfer';
      pauseButton.disabled=!user||(!enabled&&version===null)}
-   if(user){report(enabled?'Cloud connected — automatic sync is on.':'Signed in as '+(user.email||'ECHO user')+'. Choose Upload or Restore to start syncing.')}
-   else report('Not signed in. ECHO is still saving privately in this browser.');
+   if(user){report(enabled?'Signed in with ORBIT / GAIA — cloud sync is on.':'Signed in with ORBIT / GAIA as '+(user.email||'account')+'. Choose Upload or Restore to start syncing.')}
+   else report('Sign in to ORBIT on this browser, then return to ECHO. Your local ECHO data remains available.');
    lastSync.textContent=localStorage.getItem('echo-last-cloud-operation')||'';
  }
  async function getRow(){
@@ -133,47 +133,21 @@
      reconcile();
    }else showUI();
  }
- emailButton.addEventListener('click',async()=>{
-   const input=$('cloudEmail'),email=input.value.trim();
-   if(!input.checkValidity()||!email){report('Enter a valid email address.');return}
-   if(location.protocol!=='https:'){report('Email sign-in requires the hosted HTTPS site.');return}
-   setBusy(true);
+ async function checkSharedSession() {
    try{
-     const {error}=await db.auth.signInWithOtp({email,options:{
-       emailRedirectTo:location.origin+location.pathname,shouldCreateUser:true
-     }});
-     if(error)throw error;
-     report('Email link requested. Follow it back to ECHO to sign in.');
-   }catch(err){report('Sign-in error: '+err.message+'. Check Supabase Auth URL Configuration.')}
-   finally{setBusy(false)}
- });
- // Sign in with an existing password; does not generate an email.
- if(passwordButton)passwordButton.addEventListener('click',async()=>{
-   const input=$('cloudEmail'),pwd=$('cloudLoginPassword');
-   const email=input.value.trim(),password=pwd.value;
-   if(!input.checkValidity()||!email||!password){report('Enter your email and password. If you have not set a password yet, use the magic link after the email limit resets.');return}
-   setBusy(true);
-   try{
-     const {error}=await db.auth.signInWithPassword({email,password});
-     if(error)throw error;
-     pwd.value='';
-     report('Signed in. Your workspace is ready.');
-   }catch(err){report('Password sign-in failed: '+err.message)}
-   finally{pwd.value='';setBusy(false)}
- });
- // Only an already authenticated session may set an account password.
- if(setPasswordButton)setPasswordButton.addEventListener('click',async()=>{
-   const input=$('cloudNewPassword'),password=input.value;
-   if(!user){report('Sign in with your verified email before setting a password.');return}
-   if(password.length<12){report('Choose a password with at least 12 characters.');return}
-   if(!confirm('Set or replace the password for your ECHO account?'))return;
-   setBusy(true);
-   try{
-     const {data,error}=await db.auth.updateUser({password});
-     if(error)throw error;
-     report('Password updated. You can use password sign-in on your other devices.');
-   }catch(err){report('Password update failed: '+err.message+'. Your account security settings may require reauthentication.')}
-   finally{input.value='';setBusy(false)}
+     const {data,error}=await db.auth.getUser();
+     if(error && !/session missing|auth session missing/i.test(error.message||''))throw error;
+     if(data?.user)setupUser(data.user);
+     else {
+       user=null;enabled=false;version=null;baseline=null;
+       clearTimeout(pendingTimer);pendingTimer=null;showUI();
+       report('No ORBIT / GAIA session found yet. Sign in on ORBIT, then return and check again.');
+     }
+   }catch(err){report('Cannot check ORBIT session: '+err.message)}
+ }
+ if(recheckButton)recheckButton.addEventListener('click',()=>{
+   if(busy||writing)return;setBusy(true);
+   checkSharedSession().finally(()=>setBusy(false));
  });
  uploadButton.addEventListener('click',async()=>{
    if(!user||writing)return;
@@ -236,16 +210,22 @@
    report('Previous local copy restored. Cloud syncing is paused until you reconcile your copies.');
  });
  logoutButton.addEventListener('click',async()=>{
+   if(!confirm('Sign out of the shared ORBIT / GAIA account on this browser? Other dashboards using the same session will also be signed out.'))return;
    clearTimeout(pendingTimer);pendingTimer=null;
    enabled=false;setBusy(true);
-   try{const {error}=await db.auth.signOut();if(error)throw error;
+   try{const {error}=await db.auth.signOut({scope:'local'});if(error)throw error;
      user=null;version=null;baseline=null;showUI();
    }catch(err){report('Sign-out failed: '+err.message)}
    finally{setBusy(false)}
  });
  window.addEventListener('echo:changed',()=>{if(enabled) scheduleSave()});
  window.addEventListener('online',()=>{if(enabled){if(dirty)scheduleSave();else reconcile()}});
- document.addEventListener('visibilitychange',()=>{if(!document.hidden&&enabled){if(dirty)scheduleSave();else reconcile()}});
+ document.addEventListener('visibilitychange',()=>{
+   if(document.hidden)return;
+   void checkSharedSession();
+   if(enabled){if(dirty)scheduleSave();else reconcile()}
+ });
+ window.addEventListener('focus',()=>{void checkSharedSession()});
  setInterval(()=>{if(enabled){if(dirty){if(!writing&&!pendingTimer)scheduleSave()}else reconcile()}},30000);
  db.auth.onAuthStateChange((_event,session)=>{
    Promise.resolve().then(()=>{
