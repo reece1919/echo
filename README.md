@@ -1,5 +1,9 @@
 # ECHO v4.3 — Controlled Drift Operations
 
+## Todoist / ECHO production tasks (October 2026)
+
+The Overview now contains a read-only task list for open tasks labeled `echo` in Todoist. It uses ORBIT's existing OAuth connection and the MFA-verified shared Supabase sign-in, without adding another credential. The ECHO system emblem and favicon use a graphite-and-emerald signal motif. Existing ECHO content and cloud sync remain separate.
+
 ECHO is a tablet-friendly LIVE companion and production manager for Controlled Drift.
 
 ## Unified identity with ORBIT and GAIA
