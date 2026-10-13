@@ -1,34 +1,34 @@
-# ECHO v4.2 — Controlled Drift operations
+# ECHO v4.3 — Controlled Drift Operations
 
-ECHO is a responsive, tablet-friendly companion and production manager for Controlled Drift.
+ECHO is a tablet-friendly LIVE companion and production manager for Controlled Drift.
 
-### Workspaces
-- **Overview** — plan upcoming gaming, golf, cooking, or worldbuilding broadcasts. One stream plan creates both a Studio item and an associated promotional campaign.
-- **LIVE** — session timer, stream rundown, Twitch chat, notes, and timestamped highlight logger. Click **→ Studio** on a highlight to create a clip production task.
-- **STUDIO** — track content from Idea through Published; edit target dates/titles and repurpose items across platforms. Publishing itself still happens on the actual platforms.
-- **CALENDAR** — monthly schedule across streams, videos/posts, and promotional campaigns, plus a 30-day agenda and an unscheduled queue. Tap an item to change its date, time, title, and status. Adding a stream can create a linked promotion, and rescheduling the stream moves that linked promotion.
-- **PROMOTE** — manually track campaign goals, channels, dates, and progress.
-- **INSIGHTS** — production statistics from your ECHO records. **Not** live Twitch or YouTube audience analytics.
+## Unified identity with ORBIT and GAIA
+**ECHO now uses the same GAIA Supabase Auth account as ORBIT.** You do not need to create another ECHO account, wait on ECHO magic-link email quotas, or manage a second ECHO password.
+
+- Open [ORBIT](https://reece1919.github.io/orbit/) and sign in with your usual GAIA / ORBIT credentials.
+- Return to [ECHO](https://reece1919.github.io/echo/) on the **same browser**.
+- Under Settings → ECHO Cloud, ECHO normally recognizes that session automatically. If necessary, choose **I've signed in — check session** or refresh the page.
+- For the first connection, on the device holding your current ECHO notes and plans, click **Upload this device**. This preserves local work and initializes your private cloud copy. On another device, sign into ORBIT on that device, then choose **Restore cloud copy** in ECHO.
+- Subsequent edits are automatically synchronized with optimistic version checks. If devices conflict, ECHO pauses saving rather than overwriting silently; it retains a local safety snapshot.
+- Signing out in ECHO will sign out of this shared account **on the current browser**, including other dashboards that use the same Supabase session.
+
+GAIA, ORBIT, and ECHO have **separate application tables**, restricted by owner-specific RLS policies. ECHO uses `public.echo_workspaces` on the existing GAIA Supabase project (ref `zdurujqwhxqrwbhwzzxg`). The original standalone ECHO Supabase project (ref `xkghwqticokunxuqwyrh`) remains unchanged as a legacy project; it has **zero saved workspace rows** at cutover. No legacy remote data needed migration; browser-local content is preserved.
+
+Supabase authentication is **shared only when apps have access to the same session storage**, such as the `reece1919.github.io` origin. Different browsers/devices still require signing in through ORBIT separately. This integrates sign-in identity, **not** a public data-sharing permission.
+
+## Workspaces
+- **Overview** — plan future broadcasts and generate linked promotions.
+- **LIVE** — manual stream timer, stream rundown, Twitch chat, highlights with **→ Studio** clip planning.
+- **STUDIO** — content ideas, statuses, editing, multi-platform repurposing.
+- **CALENDAR** — schedule streams, videos/posts and promotions, modify dates and linked campaign dates, view unscheduled work.
+- **PROMOTE** — organize promotions and track their progress.
+- **INSIGHTS** — activity based only on ECHO records (not actual social analytics).
 - **NOTES** — persistent talking points and scratchpad.
 
-### ECHO Cloud (Supabase)
-Supabase is optional. This site continues to work without logging in, saving to your browser locally. For a new account, sign in once with an email magic link, then use Settings → ECHO Cloud → Set password to enable ordinary email-and-password sign-in without new login emails. When signed in, open Settings → ECHO Cloud and choose **Upload this device** or **Restore cloud copy** to authorize initial transfer. Auto-sync is then enabled for that device.
+## Data and privacy
+ECHO is hosted from this public GitHub repository; private planning records never enter GitHub. Only a **publishable** Supabase API key is present in the browser. Row-level security restricts user-owned records. The legacy separate ECHO backend is not queried.
 
-Cloud save operations use optimistic revision checks: if two devices change the same cloud snapshot, ECHO stops rather than silently overwriting the other copy. The conflicted local data is retained. ECHO can fetch other-device updates when this device has no unsaved changes, generally within 30 seconds or on returning to the page. There are explicit pause controls and backup exports. This is a single-owner JSON workspace, not multi-user collaborative editing.
+Cloud sync excludes the live-session timer and stream-status runtime, which remain local to each device. No OBS connection is required. Social scheduling, direct social posting, platform analytics, and Todoist automation remain future integrations.
 
-**Cloud setup:** Configure Supabase Auth allowed Site URL and Redirect URL as `https://reece1919.github.io/echo/`. See [Supabase setup](docs/SUPABASE_SETUP.md).
-
-### Privacy
-The GitHub Pages source is public. Cloud planning data is not stored in GitHub. The Supabase browser app uses only a public *publishable* key; row-level security restricts access to each user's own data. No OBS connection or social-media API credentials are required.
-
-### Hosting
-GitHub Pages: deploy the `main` branch from `/(root)`. No build process or backend server is required for the static dashboard.
-
-### Not yet integrated
-Native social scheduling/posting, YouTube/Twitch analytics, Todoist, automated video clipping, and media file storage.
-
-### Testing notes (v4.2)
-- Static JavaScript syntax validated for the inline app and external calendar, stream workflow and cloud modules.
-- Simulated calendar testing verified 42 calendar cells, creation of a stream and linked campaign, rescheduling both together, status edits and type filters.
-- Simulated authentication testing verified password sign-in and setting a password in an authenticated session, without storing password values.
-- Live Supabase authentication and two-device sync still require testing from your own browsers. Email sending is rate-limited by Supabase's default SMTP; adding password sign-in doesn't bypass initial email verification.
+## Deployment
+GitHub Pages: `main` branch, `/(root)`. No build step needed. See [Supabase setup](docs/SUPABASE_SETUP.md) for the shared login setup and test procedure, or [the shared-table migration](supabase/shared-orbit-auth.sql).
