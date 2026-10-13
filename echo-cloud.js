@@ -6,9 +6,9 @@
  const $=id=>document.getElementById(id);
  const app=window.ECHO;
  const status=$('cloudState'), signIn=$('cloudSignInActions'), account=$('cloudAccountActions');
- const emailButton=$('cloudEmailButton'),uploadButton=$('cloudUpload'),downloadButton=$('cloudDownload');
+ const emailButton=$('cloudEmailButton'),passwordButton=$('cloudPasswordLogin'),setPasswordButton=$('cloudSetPassword'),uploadButton=$('cloudUpload'),downloadButton=$('cloudDownload');
  const pauseButton=$('cloudPause'),undoButton=$('cloudUndo'),logoutButton=$('cloudSignOut'),lastSync=$('cloudLastSync');
- const buttons=[emailButton,uploadButton,downloadButton,pauseButton,undoButton,logoutButton].filter(Boolean);
+ const buttons=[emailButton,passwordButton,setPasswordButton,uploadButton,downloadButton,pauseButton,undoButton,logoutButton].filter(Boolean);
  if(!app||!status||!signIn||!account)return;
  function report(text){status.textContent=text}
  if(!window.supabase?.createClient){report('Cloud library could not load. ECHO still saves locally.');return}
@@ -146,6 +146,34 @@
      report('Email link requested. Follow it back to ECHO to sign in.');
    }catch(err){report('Sign-in error: '+err.message+'. Check Supabase Auth URL Configuration.')}
    finally{setBusy(false)}
+ });
+ // Sign in with an existing password; does not generate an email.
+ if(passwordButton)passwordButton.addEventListener('click',async()=>{
+   const input=$('cloudEmail'),pwd=$('cloudLoginPassword');
+   const email=input.value.trim(),password=pwd.value;
+   if(!input.checkValidity()||!email||!password){report('Enter your email and password. If you have not set a password yet, use the magic link after the email limit resets.');return}
+   setBusy(true);
+   try{
+     const {error}=await db.auth.signInWithPassword({email,password});
+     if(error)throw error;
+     pwd.value='';
+     report('Signed in. Your workspace is ready.');
+   }catch(err){report('Password sign-in failed: '+err.message)}
+   finally{pwd.value='';setBusy(false)}
+ });
+ // Only an already authenticated session may set an account password.
+ if(setPasswordButton)setPasswordButton.addEventListener('click',async()=>{
+   const input=$('cloudNewPassword'),password=input.value;
+   if(!user){report('Sign in with your verified email before setting a password.');return}
+   if(password.length<12){report('Choose a password with at least 12 characters.');return}
+   if(!confirm('Set or replace the password for your ECHO account?'))return;
+   setBusy(true);
+   try{
+     const {data,error}=await db.auth.updateUser({password});
+     if(error)throw error;
+     report('Password updated. You can use password sign-in on your other devices.');
+   }catch(err){report('Password update failed: '+err.message+'. Your account security settings may require reauthentication.')}
+   finally{input.value='';setBusy(false)}
  });
  uploadButton.addEventListener('click',async()=>{
    if(!user||writing)return;
