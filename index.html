@@ -45,6 +45,7 @@
     @media(max-width:700px){.cal-day{min-height:81px;padding:4px;gap:3px}.cal-day-head span{font-size:11px}.cal-pill{font-size:9px;padding:3px}.cal-navigate h3{font-size:14px;min-width:126px}.cal-weekdays{font-size:10px}.cal-toolbar{align-items:flex-start}}
     @media(max-width:420px){.cal-day{min-height:62px}.cal-pill{font-size:0;min-height:8px;padding:0 1px;max-height:8px}.cal-more{font-size:9px}.cal-navigate{gap:3px}.cal-navigate h3{min-width:115px}}
   </style>
+  <link rel="stylesheet" href="todoist-system.css?v=1.0.0">
 </head>
 <body>
 <main class="shell">
@@ -75,6 +76,7 @@
         <div class="stat"><div class="label">Stream session</div><div class="value" id="homeStream">READY</div><div class="caption">Manual status</div></div>
       </div>
     </div>
+    <section class="system-todoist" data-system-todoist="echo" aria-label="ECHO Todoist production tasks"></section>
     <div class="ops-grid">
       <section class="card"><div class="card-head"><h2>Workspaces</h2></div>
         <div class="workspace-grid">
@@ -460,5 +462,6 @@
 <script defer src="./echo-v4.js"></script>
 <script defer src="./echo-calendar.js"></script>
 <script defer src="./echo-cloud.js"></script>
+<script defer src="./todoist-system.js?v=1.0.0"></script>
 </body>
 </html>
