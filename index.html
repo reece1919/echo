@@ -419,7 +419,8 @@
   });
   document.querySelectorAll('[data-go]').forEach(button=>button.onclick=()=>activateTab(button.dataset.go));
   // Safe bridge for the optional ECHO cloud service and v4 workspaces.
-  const cloudFields=['channel','youtube','customLabel','customUrl','tasks','nextTaskId','talkingPoints','scratchPad','contentItems','promoItems','moments'];
+  if(!state.todoistLinks || typeof state.todoistLinks!=='object' || Array.isArray(state.todoistLinks))state.todoistLinks={};
+  const cloudFields=['channel','youtube','customLabel','customUrl','tasks','nextTaskId','talkingPoints','scratchPad','contentItems','promoItems','moments','todoistLinks'];
   const clone = data => JSON.parse(JSON.stringify(data));
   function refreshWorkspace(){
     renderContent();renderPromos();renderTasks();renderMoments();renderStatus();updateOverview();updateLinks();
@@ -460,5 +461,6 @@
 <script defer src="./echo-v4.js"></script>
 <script defer src="./echo-calendar.js"></script>
 <script defer src="./echo-cloud.js"></script>
+<script defer src="./echo-todoist.js"></script>
 </body>
 </html>
