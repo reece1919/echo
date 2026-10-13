@@ -251,6 +251,24 @@
   <footer class="footer"><span>CONTROLLED DRIFT · <b>ECHO · OPERATIONS</b> · v4.1</span><span>Stream · Content · Promotion · Optional private cloud</span></footer>
 </main>
 
+<dialog id="calEditDialog" aria-labelledby="calEditTitle">
+  <form id="calEditForm">
+    <h2 id="calEditTitle">Calendar activity</h2>
+    <p class="quiet" id="calEditContext"></p>
+    <div class="settings-grid">
+      <div class="setting"><label for="calEditName">Title</label><input class="input" type="text" maxlength="160" required id="calEditName"></div>
+      <div class="setting"><label for="calEditDate">Target date</label><input class="input" type="date" id="calEditDate"></div>
+      <div class="setting"><label for="calEditTime">Time (optional)</label><input class="input" type="time" id="calEditTime"></div>
+      <div class="setting"><label for="calEditStatus">Stage</label><select class="input" id="calEditStatus"></select></div>
+    </div>
+    <p class="quiet" id="calEditHelp"></p>
+    <div class="modal-actions" style="flex-wrap:wrap">
+      <button class="button" type="button" id="calEditOpen">Open workspace</button>
+      <button class="button ghost" type="button" id="calEditCancel">Cancel</button>
+      <button class="button primary" type="submit">Save changes</button>
+    </div>
+  </form>
+</dialog>
 <dialog id="settingsDialog" aria-labelledby="settingsTitle">
   <form id="settingsForm"><h2 id="settingsTitle">Dashboard settings</h2><p>Configure the Twitch channel and quick links. Settings stay on this device, not in the public GitHub repository.</p>
     <div class="settings-grid"><div class="setting"><label for="settingChannel">Twitch channel</label><input class="input" id="settingChannel" placeholder="controlled_drift" required spellcheck="false"></div>
