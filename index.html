@@ -38,6 +38,7 @@
     .nav{overflow-x:auto;scrollbar-width:thin}.nav button{flex:1 0 auto;min-width:93px;padding:0 10px;white-space:nowrap}.intro{font-size:clamp(22px,3vw,36px);font-weight:800;letter-spacing:-.035em;margin:5px 0 7px}.ops-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0 3px}.ops-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:13px}.workspace-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.workspace{display:flex;flex-direction:column;gap:7px;text-align:left;border:1px solid var(--outline);border-radius:13px;background:var(--surface-alt);color:var(--ink);padding:13px;min-height:105px}.workspace strong{font-size:14px;color:var(--teal)}.workspace span{font-size:12px;color:var(--muted)}.ops-form{display:flex;flex-direction:column;gap:10px}.form-columns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.form-columns label{font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:6px}.board-list{display:flex;flex-direction:column;gap:9px}.board-item{border:1px solid var(--outline);border-radius:12px;background:#1b293b;display:flex;align-items:center;gap:12px;padding:12px;flex-wrap:wrap}.board-copy{flex:1;min-width:170px}.board-title{font-size:14px;font-weight:800;overflow-wrap:anywhere}.board-details{font-size:11px;color:var(--muted);margin-top:5px;overflow-wrap:anywhere}.board-item select{background:#12202d;border:1px solid #52617a;border-radius:10px;color:var(--ink);padding:10px;min-height:43px;max-width:190px}.board-item .button{min-height:43px}.empty-state{font-size:13px;color:var(--muted);padding:18px 4px}.backup-controls{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
     @media(max-width:850px){.ops-grid{grid-template-columns:1fr}}
     @media(max-width:530px){.ops-stats{grid-template-columns:1fr 1fr}.ops-stats .stat:last-child{grid-column:1/-1}.form-columns{grid-template-columns:1fr}.workspace-grid{grid-template-columns:1fr 1fr}.workspace{min-height:120px;padding:10px}.workspace span{font-size:11px}.nav button{flex:0 0 auto;min-width:90px}.board-item select{flex:1}}
+    .cloud-panel{border:1px solid var(--outline);border-radius:14px;padding:14px;background:#132132}.cloud-panel h3{margin:0 0 8px;font-size:17px;color:#70d8cb}.cloud-state{font-size:13px;margin:10px 0;color:#bceae4}.cloud-actions{display:flex;flex-direction:column;gap:9px;margin:10px 0}.cloud-actions label{font-size:12px;color:var(--muted)}.cloud-panel [hidden]{display:none!important}
   </style>
 </head>
 <body>
@@ -178,7 +179,7 @@
       <div class="notes-meta"><div class="subtle">Autosaves privately in this browser, not to GitHub.</div><button class="button small" type="button" id="exportNotes">↓ Export notes</button></div>
     </section>
   </section>
-  <footer class="footer"><span>CONTROLLED DRIFT · <b>ECHO · OPERATIONS</b> · v3.0</span><span>Stream · Content · Promotion · Local device storage</span></footer>
+  <footer class="footer"><span>CONTROLLED DRIFT · <b>ECHO · OPERATIONS</b> · v3.1</span><span>Stream · Content · Promotion · Optional private cloud</span></footer>
 </main>
 
 <dialog id="settingsDialog" aria-labelledby="settingsTitle">
@@ -188,6 +189,25 @@
       <div class="setting"><label for="settingCustomLabel">Optional fifth quick link label</label><input class="input" id="settingCustomLabel" maxlength="40" placeholder="e.g. Stream schedule"></div>
       <div class="setting"><label for="settingCustomUrl">Optional fifth link URL (https://)</label><input class="input" id="settingCustomUrl" type="url" placeholder="https://example.com"></div>
     </div>
+    <div class="setting cloud-panel" id="cloudPanel">
+  <h3>☁ ECHO Cloud</h3>
+  <p class="quiet">Private Supabase workspace · manual, conflict-aware transfer between your devices. Your public GitHub repository never stores your notes.</p>
+  <div id="cloudState" class="cloud-state" role="status" aria-live="polite">Checking cloud connection…</div>
+  <div class="cloud-actions" id="cloudSignInActions">
+    <label for="cloudEmail">Email address for secure sign-in link</label>
+    <input class="input" id="cloudEmail" type="email" autocomplete="email" placeholder="you@example.com">
+    <button class="button primary" id="cloudEmailButton" type="button">Send sign-in link</button>
+  </div>
+  <div class="cloud-actions" id="cloudAccountActions" hidden>
+    <div class="backup-controls">
+      <button class="button small primary" type="button" id="cloudUpload">↑ Upload this device</button>
+      <button class="button small" type="button" id="cloudDownload">↓ Restore cloud copy</button>
+      <button class="button small ghost" type="button" id="cloudSignOut">Sign out</button>
+    </div>
+    <p class="quiet">Changes do not sync automatically yet. Upload after editing, then restore the latest cloud copy on your other device. Both actions ask before replacing anything.</p>
+  </div>
+  <p class="quiet" id="cloudLastSync"></p>
+</div>
     <div class="setting"><label>Data backup and transfer</label><p class="quiet">Edits stay in this browser. To move them to another device, export a backup and import it there.</p>
     <div class="backup-controls"><button class="button small" type="button" id="backupExport">↓ Download backup</button><button class="button small" type="button" id="backupImport">↑ Restore backup</button><input type="file" id="backupFile" accept=".json,application/json" hidden></div></div>
     <div class="modal-actions"><button class="button ghost" type="button" id="settingsClose">Cancel</button><button class="button primary" type="submit">Save settings</button></div>
@@ -312,5 +332,7 @@
 })();
 })();
 </script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3"></script>
+<script defer src="./echo-cloud.js"></script>
 </body>
 </html>
