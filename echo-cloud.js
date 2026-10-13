@@ -23,7 +23,7 @@
  const snapshot=()=>app.syncSnapshot();
  const serialized=()=>JSON.stringify(snapshot());
  const readMeta=id=>{try{return JSON.parse(localStorage.getItem(metaKey(id))||'null')}catch{return null}};
- function setBusy(v){for(const b of buttons)b.disabled=!!v}
+ function setBusy(v){busy=!!v;for(const b of buttons)b.disabled=busy}
  function writeMeta(){
    if(!user||version===null||baseline===null)return;
    localStorage.setItem(metaKey(user.id),JSON.stringify({revision:version,baseline}));
