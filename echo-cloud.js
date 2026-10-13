@@ -7,8 +7,8 @@
  const app=window.ECHO;
  const status=$('cloudState'), signIn=$('cloudSignInActions'), account=$('cloudAccountActions');
  const emailButton=$('cloudEmailButton'),uploadButton=$('cloudUpload'),downloadButton=$('cloudDownload');
- const pauseButton=$('cloudPause'),logoutButton=$('cloudSignOut'),lastSync=$('cloudLastSync');
- const buttons=[emailButton,uploadButton,downloadButton,pauseButton,logoutButton].filter(Boolean);
+ const pauseButton=$('cloudPause'),undoButton=$('cloudUndo'),logoutButton=$('cloudSignOut'),lastSync=$('cloudLastSync');
+ const buttons=[emailButton,uploadButton,downloadButton,pauseButton,undoButton,logoutButton].filter(Boolean);
  if(!app||!status||!signIn||!account)return;
  function report(text){status.textContent=text}
  if(!window.supabase?.createClient){report('Cloud library could not load. ECHO still saves locally.');return}
@@ -34,6 +34,7 @@
  }
  function showUI(){
    signIn.hidden=!!user;account.hidden=!user;
+   if(undoButton)undoButton.disabled=!user||!localStorage.getItem(safetyKey(user.id));
    if(pauseButton){pauseButton.textContent=enabled?'Pause auto-sync':'Resume after manual transfer';
      pauseButton.disabled=!user||(!enabled&&version===null)}
    if(user){report(enabled?'Cloud connected — automatic sync is on.':'Signed in as '+(user.email||'ECHO user')+'. Choose Upload or Restore to start syncing.')}
@@ -51,6 +52,7 @@
    if(user){
      localStorage.setItem(modeKey(user.id),'off');
      localStorage.setItem(unsyncedKey(user.id),JSON.stringify({savedAt:new Date().toISOString(),data:snapshot()}));
+     localStorage.setItem(safetyKey(user.id),JSON.stringify({savedAt:new Date().toISOString(),data:snapshot()}));
    }
    report(reason+' Local changes have been preserved. Use Upload or Restore to resolve the conflict.');
    if(pauseButton)pauseButton.textContent='Resume after manual transfer';
@@ -193,6 +195,17 @@
    }else{
      report('Choose Upload or Restore to reconcile the two copies before restarting automatic sync.');
    }
+ });
+ if(undoButton)undoButton.addEventListener('click',()=>{
+   if(!user)return;
+   let backup=null;
+   try{backup=JSON.parse(localStorage.getItem(safetyKey(user.id))||'null')}catch{}
+   if(!backup||!backup.data){report('There is no local safety copy to restore.');return}
+   if(!confirm('Restore the local safety copy saved '+new Date(backup.savedAt).toLocaleString()+'? Your current device data will be replaced, and automatic cloud syncing will pause until you choose Upload or Restore.'))return;
+   enabled=false;dirty=false;clearTimeout(pendingTimer);pendingTimer=null;
+   localStorage.setItem(modeKey(user.id),'off');
+   app.restore(backup.data);showUI();
+   report('Previous local copy restored. Cloud syncing is paused until you reconcile your copies.');
  });
  logoutButton.addEventListener('click',async()=>{
    clearTimeout(pendingTimer);pendingTimer=null;
