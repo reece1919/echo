@@ -1,0 +1,18 @@
+{
+  "name": "ECHO — Controlled Drift Operations",
+  "short_name": "ECHO",
+  "description": "Multi-channel streaming, content and promotion workspace for Controlled Drift",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b111c",
+  "theme_color": "#0b111c",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
