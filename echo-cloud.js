@@ -19,6 +19,7 @@
  const modeKey=id=>'echo-cloud-auto:'+id;
  const metaKey=id=>'echo-cloud-meta:'+id;
  const unsyncedKey=id=>'echo-cloud-unsynced:'+id;
+ const safetyKey=id=>'echo-cloud-safety-backup:'+id;
  const snapshot=()=>app.syncSnapshot();
  const serialized=()=>JSON.stringify(snapshot());
  const readMeta=id=>{try{return JSON.parse(localStorage.getItem(metaKey(id))||'null')}catch{return null}};
@@ -175,7 +176,7 @@
      const row=await getRow();
      if(!row){report('No cloud copy exists. Upload from the device containing your work first.');return}
      if(!confirm('Restore cloud revision '+row.revision+'? This REPLACES local notes, content, campaigns, highlights and rundown. The stream timer stays local. A safety copy will be kept in this browser.'))return;
-     localStorage.setItem(unsyncedKey(user.id),JSON.stringify({savedAt:new Date().toISOString(),data:snapshot()}));
+     localStorage.setItem(safetyKey(user.id),JSON.stringify({savedAt:new Date().toISOString(),data:snapshot()}));
      applyRemote(row);
      enable(row.revision,'Restored cloud copy. Automatic sync is enabled.');
      timeStamp('Cloud restored to this device');
