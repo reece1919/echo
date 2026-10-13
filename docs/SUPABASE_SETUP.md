@@ -1,9 +1,36 @@
-# ECHO — Supabase integration plan
+# ECHO — Supabase integration status (13 October 2026)
+
+## Completed
+- Dedicated Supabase project **ECHO** created under organization **reece1919**, region **us-west-1**.
+- Project ID: `xkghwqticokunxuqwyrh`.
+- Project API URL: `https://xkghwqticokunxuqwyrh.supabase.co`.
+- Supabase reported a creation cost of **$0/month** (usage, quotas and future plan changes may still apply).
+- Schema `supabase/schema.sql` applied successfully and verified.
+- Table `public.echo_workspaces`: 4 ownership policies, RLS enabled, no anonymous SELECT permission.
+- Supabase Security Advisor reported **no findings**.
+- ECHO v3.1 browser interface now includes Supabase email magic-link sign-in and deliberate manual Upload/Restore controls.
+- The browser code contains **only a publishable key**; no secrets or service role key.
+- JavaScript syntax checked for both `index.html` and `echo-cloud.js`.
+
+## Action required to activate sign-in
+Open [ECHO Supabase Auth URL Configuration](https://supabase.com/dashboard/project/xkghwqticokunxuqwyrh/auth/url-configuration).
+1. Set **Site URL** to `https://reece1919.github.io/echo/`.
+2. Add `https://reece1919.github.io/echo/` under **Redirect URLs**, then save.
+3. Make sure [GitHub Pages](https://github.com/reece1919/echo/settings/pages) uses branch `main` and folder `/(root)`. The repository is already public.
+4. Open the hosted ECHO page, go to **Settings → ECHO Cloud**, enter your email and choose **Send sign-in link**.
+5. Follow the link in your email back to ECHO. Choose **Upload this device** to create the first private cloud snapshot.
+6. On your tablet, sign in with the same email and choose **Restore cloud copy** to transfer that snapshot.
+
+**Important:** A successful test email sign-in and cross-device transfer have not yet been confirmed. ECHO does *not* automatically sync edits; first use manual upload/download. The session timer and manual stream-status runtime remain local. GitHub Pages is a static public website, but database records are accessible only to their authenticated owner under RLS.
+
+---
+
+## Original integration plan
 
 ## Current status
 - ECHO GitHub repository: https://github.com/reece1919/echo
 - GitHub Pages deployment is a separate step; verify in repository Settings → Pages.
-- No ECHO Supabase project has been created or connected yet.
+- ECHO Supabase project created, schema applied, browser cloud client added.
 - GAIA's existing Supabase project is intentionally untouched.
 - ECHO currently stores its work locally in the browser and can export/restore JSON backups.
 
