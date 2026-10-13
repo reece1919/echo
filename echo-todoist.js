@@ -40,7 +40,7 @@
   const source=$('echoTodoistSource'),status=$('echoTodoistStatus'),preview=$('echoTodoistTasks'),
     create=$('echoTodoistCreate'),result=$('echoTodoistResult'),check=$('echoTodoistCheck');
   const make=(tag,cls,text)=>{const elem=document.createElement(tag);if(cls)elem.className=cls;if(text!==undefined)elem.textContent=text;return elem};
-  let connected=false,busy=false,ownerId=null,checkedAt=0,selectedKey='',selectedTasks=new Set();
+  let connected=false,busy=false,ownerId=null,checkedAt=0,selectedKey='',selectedTasks=new Set(),previewInitializedFor='';
   const currentSnapshot=()=>app.snapshot();
   function setStatus(text,kind='neutral'){status.textContent=text;status.dataset.state=kind;}
   function setResult(text){result.textContent=text;}
@@ -65,14 +65,14 @@
     for(const x of (data.promoItems||[])){if(x&&x.id!=null)entries.push({kind:'promo',item:x,key:'promo:'+x.id})}
     entries.sort((a,b)=>String(a.item.due||'9999-12-31').localeCompare(String(b.item.due||'9999-12-31')));
     source.replaceChildren();
-    if(!entries.length){source.append(make('option','','Schedule a stream or add content first'));source.disabled=true;selectedKey='';return}
+    if(!entries.length){source.append(make('option','','Schedule a stream or add content first'));source.disabled=true;selectedKey='';previewInitializedFor='';return}
     source.disabled=false;
     for(const entry of entries){
       const opt=make('option','',fullLabel(entry));opt.value=entry.key;source.append(opt);
     }
     const match=entries.find(x=>x.key===old)||entries[0];source.value=match.key;
     const changed=selectedKey!==match.key;selectedKey=match.key;
-    if(changed)selectedTasks=new Set();
+    if(changed){selectedTasks=new Set();previewInitializedFor='';}
   }
   function isoDate(str){
     if(!/^\d{4}-\d{2}-\d{2}$/.test(String(str||'')))return null;
@@ -128,7 +128,10 @@
     const entry=resolveSelection(source.value);
     if(!entry){preview.append(make('p','quiet','No stream or content items yet.'));create.disabled=true;return}
     const steps=template(entry);
-    if(!selectedTasks.size){selectedTasks=new Set(steps.map(x=>x.key).filter(k=>!linked(entry.key,k)))}
+    if(previewInitializedFor!==entry.key){
+      selectedTasks=new Set(steps.map(x=>x.key).filter(k=>!linked(entry.key,k)));
+      previewInitializedFor=entry.key;
+    }
     let active=0;
     for(const step of steps){
       const previous=linked(entry.key,step.key);
@@ -238,7 +241,7 @@
     finally{busy=false;check.disabled=false;renderPreview()}
   }
   $('echoTodoistPreview').addEventListener('click',renderPreview);
-  source.addEventListener('change',()=>{selectedKey=source.value;selectedTasks=new Set();renderPreview()});
+  source.addEventListener('change',()=>{selectedKey=source.value;selectedTasks=new Set();previewInitializedFor='';renderPreview()});
   check.addEventListener('click',checkConnection);
   create.addEventListener('click',createSelected);
   window.addEventListener('echo:render',renderPreview);
