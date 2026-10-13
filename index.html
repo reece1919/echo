@@ -41,6 +41,9 @@
     .cloud-panel{border:1px solid var(--outline);border-radius:14px;padding:14px;background:#132132}.cloud-panel h3{margin:0 0 8px;font-size:17px;color:#70d8cb}.cloud-state{font-size:13px;margin:10px 0;color:#bceae4}.cloud-actions{display:flex;flex-direction:column;gap:9px;margin:10px 0}.cloud-actions label{font-size:12px;color:var(--muted)}.cloud-panel [hidden]{display:none!important}
     .insight-bars{display:flex;flex-direction:column;gap:12px}.insight-row{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px}.insight-bar{height:8px;border-radius:8px;background:#304157;overflow:hidden}.insight-bar>span{height:100%;background:#65cfc0;display:block;border-radius:8px}.echo-launchpad{margin:0 0 13px}.echo-launchpad .form-columns{grid-template-columns:repeat(2,minmax(0,1fr))}.echo-launchpad .launchpad-form{display:flex;flex-direction:column;gap:10px}.echo-launchpad .button.primary{max-width:230px}.cloud-panel .cloud-connection{font-size:12px}
     @media(max-width:530px){.echo-launchpad .form-columns{grid-template-columns:1fr}}
+    .cal-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:12px 0}.cal-navigate{display:flex;align-items:center;gap:8px;min-width:0}.cal-navigate h3{font-size:18px;min-width:180px;text-align:center;margin:0;font-weight:850}.cal-filter-label{display:flex;gap:8px;align-items:center;color:var(--muted);font-size:12px}.cal-filter-label select{width:auto;min-width:140px}.cal-legend{display:flex;flex-wrap:wrap;align-items:center;gap:16px;margin:10px 0 12px;color:var(--muted);font-size:11px}.cal-dot{display:inline-block;width:9px;height:9px;border-radius:100%;margin-right:6px;background:#4da7ef}.cal-dot.live{background:#eea45a}.cal-dot.studio{background:#61cbbb}.cal-dot.promote{background:#ba9aeb}.cal-weekdays,.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}.cal-weekdays{text-align:center;font-size:11px;color:var(--muted);font-weight:750;margin-bottom:5px}.cal-day{min-width:0;min-height:116px;border:1px solid var(--outline);border-radius:10px;background:#182536;padding:6px;display:flex;flex-direction:column;gap:5px}.cal-day.muted{opacity:.43}.cal-day.today{border-color:#6fd6c8;box-shadow:0 0 0 1px #6fd6c840 inset}.cal-day-head{display:flex;align-items:center;justify-content:space-between;gap:3px}.cal-day-head span{font-size:12px;font-weight:750}.cal-add-day{border:0;background:transparent;color:#9fc9c3;font-size:17px;min-width:24px;min-height:24px;padding:0}.cal-pill{min-width:0;display:block;width:100%;border:1px solid transparent;border-left:3px solid #7b8c9d;border-radius:6px;background:#26394c;text-align:left;padding:4px 5px;line-height:1.2;font-size:10px;white-space:normal;overflow-wrap:anywhere}.cal-pill.live{border-left-color:#eea45a}.cal-pill.studio{border-left-color:#61cbbb}.cal-pill.promote{border-left-color:#ba9aeb}.cal-more{font-size:10px;color:var(--muted)}.cal-agenda{display:flex;flex-direction:column;gap:7px}.cal-agenda-row{display:flex;align-items:center;gap:10px;padding:9px;border:1px solid var(--outline);border-radius:10px;background:var(--surface-alt)}.cal-agenda-body{flex:1;min-width:0}.cal-agenda-title{font-size:12px;font-weight:800;overflow-wrap:anywhere}.cal-agenda-detail{font-size:11px;color:var(--muted)}.cal-linked-check{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px}.cal-linked-check input{accent-color:var(--teal)}.cal-agenda-empty{font-size:12px;color:var(--muted);padding:12px}.cal-form-cols{grid-template-columns:repeat(2,minmax(0,1fr))}
+    @media(max-width:700px){.cal-day{min-height:81px;padding:4px;gap:3px}.cal-day-head span{font-size:11px}.cal-pill{font-size:9px;padding:3px}.cal-navigate h3{font-size:14px;min-width:126px}.cal-weekdays{font-size:10px}.cal-toolbar{align-items:flex-start}}
+    @media(max-width:420px){.cal-day{min-height:62px}.cal-pill{font-size:0;min-height:8px;padding:0 1px;max-height:8px}.cal-more{font-size:9px}.cal-navigate{gap:3px}.cal-navigate h3{min-width:115px}}
   </style>
 </head>
 <body>
@@ -54,6 +57,7 @@
     <button type="button" data-tab="command" aria-selected="false">◈ LIVE</button>
     <button type="button" data-tab="chat" aria-selected="false">☷ Chat</button>
     <button type="button" data-tab="content" aria-selected="false">▦ STUDIO</button>
+    <button type="button" data-tab="calendar" aria-selected="false">▤ CALENDAR</button>
     <button type="button" data-tab="promos" aria-selected="false">◎ PROMOTE</button>
     <button type="button" data-tab="insights" aria-selected="false">▥ INSIGHTS</button>
     <button type="button" data-tab="notes" aria-selected="false">✎ Notes</button>
@@ -89,6 +93,57 @@
         </div>
         <p class="quiet" style="margin-top:12px">Shortcuts open native services; ECHO does not post or schedule on your behalf.</p>
       </section>
+    </div>
+  </section>
+  <section class="page" id="page-calendar" hidden aria-label="Controlled Drift production calendar">
+    <div class="card">
+      <div class="card-head"><h2>Production calendar</h2><span class="subtle">Streams · Posts · Promotions</span></div>
+      <div class="cal-toolbar">
+        <div class="cal-navigate">
+          <button class="button small" type="button" id="calPrev" aria-label="Previous month">‹</button>
+          <h3 id="calTitle" aria-live="polite">Calendar</h3>
+          <button class="button small" type="button" id="calNext" aria-label="Next month">›</button>
+          <button class="button small ghost" type="button" id="calToday">Today</button>
+        </div>
+        <label class="cal-filter-label">Show
+          <select class="input" id="calFilter">
+            <option value="all">All activity</option>
+            <option value="live">Live streams</option>
+            <option value="studio">Studio content</option>
+            <option value="promote">Promotions</option>
+          </select>
+        </label>
+      </div>
+      <div class="cal-legend">
+        <span><i class="cal-dot live"></i>LIVE</span>
+        <span><i class="cal-dot studio"></i>STUDIO</span>
+        <span><i class="cal-dot promote"></i>PROMOTE</span>
+        <span class="quiet">Tap an item to edit its date or open its workspace</span>
+      </div>
+      <div class="cal-weekdays" aria-hidden="true"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+      <div id="calMonth" class="cal-grid" aria-label="Monthly production calendar"></div>
+    </div>
+    <div class="ops-grid" style="margin-top:13px">
+      <div class="card"><div class="card-head"><h2>Schedule something</h2><span class="subtle">Create a new calendar item</span></div>
+        <form id="calAddForm" class="ops-form">
+          <input class="input" name="title" aria-label="Activity title" maxlength="150" placeholder="Title or content idea" required>
+          <div class="form-columns cal-form-cols">
+            <label>Type<select class="input" name="kind"><option value="live">Live stream</option><option value="studio">Video or post</option><option value="promote">Promotion</option></select></label>
+            <label>Platform<select class="input" name="platform"><option>Twitch</option><option>YouTube</option><option>Instagram</option><option>TikTok</option><option>Multi-platform</option></select></label>
+            <label>Date<input class="input" name="due" type="date" required></label>
+            <label>Time (optional)<input class="input" name="time" type="time"></label>
+          </div>
+          <label class="cal-linked-check"><input type="checkbox" name="linkedPromo" checked> Create a linked promotion for new streams</label>
+          <button class="button primary" type="submit">+ Add to calendar</button>
+        </form>
+      </div>
+      <div class="card"><div class="card-head"><h2>Coming up</h2><span class="subtle" id="calUpcomingCount">Next 30 days</span></div>
+        <div id="calUpcoming" class="cal-agenda"></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:13px">
+      <div class="card-head"><h2>Needs scheduling</h2><span class="subtle" id="calUnscheduledCount">0 items</span></div>
+      <div id="calUnscheduled" class="cal-agenda"></div>
     </div>
   </section>
   <section class="page" id="page-content" hidden aria-label="Content studio">
@@ -193,7 +248,7 @@
     <section class="card"><div class="card-head"><h2>Production pipeline</h2></div><div id="insightStages" class="insight-bars"></div></section>
   </div>
 </section>
-  <footer class="footer"><span>CONTROLLED DRIFT · <b>ECHO · OPERATIONS</b> · v4.0</span><span>Stream · Content · Promotion · Optional private cloud</span></footer>
+  <footer class="footer"><span>CONTROLLED DRIFT · <b>ECHO · OPERATIONS</b> · v4.1</span><span>Stream · Content · Promotion · Optional private cloud</span></footer>
 </main>
 
 <dialog id="settingsDialog" aria-labelledby="settingsTitle">
@@ -384,6 +439,7 @@
 </script>
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3"></script>
 <script defer src="./echo-v4.js"></script>
+<script defer src="./echo-calendar.js"></script>
 <script defer src="./echo-cloud.js"></script>
 </body>
 </html>
