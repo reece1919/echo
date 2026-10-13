@@ -292,12 +292,15 @@
   function boardRow(item,stages,arr,render){
     const root=element('div','board-item');
     const body=element('div','board-copy');
-    body.append(element('div','board-title',item.title),element('div','board-details',[item.platform,item.format,item.goal,item.due?('Target '+item.due):'No date'].filter(Boolean).join(' · ')));
+    body.append(element('div','board-title',item.title),element('div','board-details',[item.platform,item.format,item.goal,item.due?('Target '+item.due):'No date',item.originTimestamp?('Marked '+item.originTimestamp):''].filter(Boolean).join(' · ')));
     const select=element('select');select.setAttribute('aria-label','Status for '+item.title);
     stages.forEach(stage=>{const option=document.createElement('option');option.value=stage;option.textContent=stage;option.selected=item.stage===stage;select.append(option)});
     select.addEventListener('change',()=>{item.stage=select.value;persist();render();updateOverview()});
     const del=element('button','button small ghost','Remove');del.type='button';del.setAttribute('aria-label','Remove '+item.title);del.onclick=()=>{if(!confirm('Remove "'+item.title+'" from ECHO?'))return;const index=arr.findIndex(v=>v.id===item.id);if(index>=0)arr.splice(index,1);persist();render();updateOverview()};
-    root.append(body,select,del);return root;
+    root.append(body,select);
+    const edit=element('button','button small','Edit');edit.type='button';edit.onclick=()=>window.ECHO?.editItem(item.id,arr===state.contentItems?'content':'promotion');root.append(edit);
+    if(arr===state.contentItems){const repurpose=element('button','button small','Repurpose');repurpose.type='button';repurpose.title='Make a separate post for another platform';repurpose.onclick=()=>window.ECHO?.repurpose(item.id);root.append(repurpose)}
+    root.append(del);return root;
   }
   function renderContent(){
     const root=$('contentItems');root.replaceChildren();$('contentCount').textContent=state.contentItems.length+' items';
