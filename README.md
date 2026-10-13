@@ -1,9 +1,13 @@
 # ECHO — Controlled Drift Operations Hub
 
-**ECHO v3.0** is a tablet-first multi-channel management dashboard. It is designed for a **side-by-side split-screen workflow**: use your existing OBS controller for scenes/audio, and use ECHO for stream organization and Twitch shortcuts. No OBS connection or paid API is needed.
+**ECHO v3.1** is a tablet-first multi-channel management dashboard. It is designed for a **side-by-side split-screen workflow**: use your existing OBS controller for scenes/audio, and use ECHO for stream organization and Twitch shortcuts. No OBS connection or paid API is needed.
 
 
-## ECHO 3.0: Controlled Drift operations hub
+## ECHO 3.1: Controlled Drift operations hub
+
+### Optional ECHO Cloud (Supabase)
+In Settings → ECHO Cloud, you can sign in by email magic link and deliberately **Upload this device** or **Restore cloud copy**. This stores your planning data privately in a dedicated Supabase project under authenticated-user RLS. The source code contains only a browser-safe publishable API key. Cloud sync is **manual, not automatic**, to avoid overwriting work on another device without confirmation. Before sending login links, configure Supabase Auth Site URL and Redirect URLs for `https://reece1919.github.io/echo/`. See [Setup guide](docs/SUPABASE_SETUP.md).
+
 
 ECHO now has **Overview, Stream, Chat, Content, Promotions and Notes** workspaces. The Content studio tracks ideas, formats, target dates and status from Idea to Published. Promotions tracks campaign goals, platforms, deadlines and status. Both export to CSV. A JSON backup/restore feature in Settings transfers data manually between browsers and devices. It does **not** automatically sync data.
 
@@ -26,7 +30,7 @@ No build step is required. To host with GitHub Pages: repository Settings → Pa
 - **Parent:** Controlled Drift
 - **GitHub repository:** `echo`
 - **Suggested Pages URL:** `https://reece1919.github.io/echo/` (valid only after you publish it)
-- **Release:** v3.0
+- **Release:** v3.1
 
 ## Publish to GitHub Pages
 
