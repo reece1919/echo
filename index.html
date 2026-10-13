@@ -248,7 +248,7 @@
     <section class="card"><div class="card-head"><h2>Production pipeline</h2></div><div id="insightStages" class="insight-bars"></div></section>
   </div>
 </section>
-  <footer class="footer"><span>CONTROLLED DRIFT · <b>ECHO · OPERATIONS</b> · v4.1</span><span>Stream · Content · Promotion · Optional private cloud</span></footer>
+  <footer class="footer"><span>CONTROLLED DRIFT · <b>ECHO · OPERATIONS</b> · v4.2</span><span>Stream · Content · Promotion · Optional private cloud</span></footer>
 </main>
 
 <dialog id="calEditDialog" aria-labelledby="calEditTitle">
@@ -278,14 +278,24 @@
     </div>
     <div class="setting cloud-panel" id="cloudPanel">
   <h3>☁ ECHO Cloud</h3>
-  <p class="quiet">Private Supabase workspace · manual, conflict-aware transfer between your devices. Your public GitHub repository never stores your notes.</p>
+  <p class="quiet">Private Supabase workspace · automatic sync after first setup. Your public GitHub repository never stores your notes.</p>
   <div id="cloudState" class="cloud-state" role="status" aria-live="polite">Checking cloud connection…</div>
   <div class="cloud-actions" id="cloudSignInActions">
-    <label for="cloudEmail">Email address for secure sign-in link</label>
-    <input class="input" id="cloudEmail" type="email" autocomplete="email" placeholder="you@example.com">
-    <button class="button primary" id="cloudEmailButton" type="button">Send sign-in link</button>
+    <label for="cloudEmail">Your email</label>
+    <input class="input" id="cloudEmail" type="email" autocomplete="username" placeholder="you@example.com">
+    <label for="cloudLoginPassword">Password (if you've set one)</label>
+    <input class="input" id="cloudLoginPassword" type="password" autocomplete="current-password" minlength="12" placeholder="Your ECHO password">
+    <button class="button primary" id="cloudPasswordLogin" type="button">Sign in with password</button>
+    <button class="button" id="cloudEmailButton" type="button">Send magic sign-in link</button>
+    <p class="quiet">First-time users need to verify their email. After that, set a password below to avoid repeated sign-in emails.</p>
   </div>
   <div class="cloud-actions" id="cloudAccountActions" hidden>
+    <div class="cloud-password-setup">
+      <label for="cloudNewPassword">Set or change password for future sign-ins (12+ characters)</label>
+      <input class="input" type="password" id="cloudNewPassword" minlength="12" autocomplete="new-password" placeholder="New ECHO password">
+      <button class="button small" type="button" id="cloudSetPassword">Save password</button>
+      <p class="quiet">Only available after you've signed in. Your password is never saved in ECHO's database or GitHub repository.</p>
+    </div>
     <div class="backup-controls">
       <button class="button small primary" type="button" id="cloudUpload">↑ Upload this device</button>
       <button class="button small" type="button" id="cloudDownload">↓ Restore cloud copy</button>
