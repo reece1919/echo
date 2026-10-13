@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b111c">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="description" content="ECHO by Controlled Drift: a multi-channel operations hub for streaming, content scheduling and promotional campaigns. No OBS connection required.">
+  <title>ECHO — Controlled Drift</title>
+  <style>
+    :root { color-scheme: dark; --bg:#0b111c; --surface:#141e2e; --surface-alt:#1b293b; --outline:#304157; --ink:#eef6fb; --muted:#9bacbe; --teal:#66d7c5; --teal-deep:#154840; --red:#ff7285; --yellow:#efc07b; --round:16px; }
+    *,*::before,*::after{box-sizing:border-box}
+    body{margin:0;min-width:280px;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:radial-gradient(ellipse 600px 430px at 0 0,#19444055,transparent 75%),var(--bg);font-size:14px;line-height:1.45}
+    button,input,textarea,select{font:inherit;color:inherit} button{cursor:pointer;touch-action:manipulation}button:disabled{opacity:.4;cursor:not-allowed} button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+    a{color:inherit;text-decoration:none} button{transition:background .15s,border-color .15s} button:hover{border-color:#77b7b2}button:active{transform:scale(.986)}
+    .shell{max-width:1560px;min-height:100vh;margin:0 auto;padding:clamp(10px,1.8vw,24px)}
+    .header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px}.identity{display:flex;gap:12px;align-items:center;min-width:0}.brand-mark{display:grid;place-items:center;flex:none;width:47px;height:47px;border:1px solid #4b9e94;border-radius:14px;color:var(--teal);font-weight:900;font-size:19px;letter-spacing:.02em;padding-right:0;background:#13332f}.kicker{font-size:10px;font-weight:850;color:var(--teal);letter-spacing:.22em}.identity h1{font-size:clamp(19px,3vw,26px);line-height:1.1;letter-spacing:.055em;margin:2px 0 0;white-space:nowrap}.header-tools{display:flex;align-items:center;gap:9px}.time-now{font-variant-numeric:tabular-nums;font-size:15px;font-weight:800;color:var(--muted);white-space:nowrap}
+    .button{border:1px solid var(--outline);border-radius:12px;background:#223247;font-weight:750;padding:11px 14px;min-height:44px;display:inline-flex;align-items:center;justify-content:center;gap:7px;text-align:center}.button.primary{background:var(--teal-deep);border-color:#3eada0;color:#dffff7}.button.ghost{background:transparent}.button.danger{background:#432630;border-color:#905260;color:#ffc3ca}.button.small{padding:8px 10px;min-height:36px;font-size:12px}.button.icon-only{padding:10px 13px}.button.full{width:100%}
+    .subtle{color:var(--muted);font-size:12px}.quiet{font-size:11px;color:var(--muted)}.topline{display:flex;justify-content:space-between;align-items:center;gap:8px;min-width:0}.status{display:inline-flex;align-items:center;gap:7px;padding:8px 11px;border:1px solid var(--outline);border-radius:30px;background:#172335;color:var(--muted);font-size:11px;font-weight:800;letter-spacing:.07em;white-space:nowrap}.status:before{content:"";display:block;height:8px;width:8px;border-radius:50%;background:var(--muted)}.status.live:before,.status.brb:before{background:var(--red);box-shadow:0 0 10px #ff728570}.status.live{color:#ffc4ca}.status.brb{color:var(--yellow)}
+    .nav{display:flex;gap:7px;margin:0 0 13px}.nav button{flex:1;min-height:46px;border:1px solid var(--outline);border-radius:12px;background:#142034;font-weight:850;font-size:13px;color:var(--muted)}.nav button.active{color:var(--teal);background:#163c3b;border-color:#43aaa1}.nav button:hover{background:#24374c}
+    .page[hidden], [hidden]{display:none!important}.columns{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,1fr);gap:13px}.stack{display:flex;flex-direction:column;gap:13px;min-width:0}.card{background:#141e2eea;border:1px solid var(--outline);border-radius:var(--round);padding:clamp(13px,1.6vw,19px);min-width:0}.card h2{font-size:12px;letter-spacing:.15em;text-transform:uppercase;margin:0;color:#d4e5eb}.card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:13px}.card-head .subtle{white-space:nowrap}
+    .stat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:13px}.stat{border:1px solid var(--outline);border-radius:14px;padding:12px;background:linear-gradient(130deg,#1b293b,#121c2a);min-width:0}.stat .label{font-size:10px;letter-spacing:.12em;font-weight:800;color:var(--muted);text-transform:uppercase}.stat .value{font-size:clamp(17px,3vw,26px);font-weight:850;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}.stat .caption{font-size:10px;color:var(--muted)}
+    .timer{font-size:clamp(45px,7vw,75px);font-weight:800;letter-spacing:.02em;line-height:1.1;margin:8px 0 18px;text-align:center;font-variant-numeric:tabular-nums}.timer-controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.timer-controls .button{padding:11px 6px}
+    .status-group{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-top:14px}.status-group button{border:1px solid var(--outline);background:#1d2a3b;border-radius:10px;min-height:46px;font-size:12px;font-weight:800}.status-group button.active{background:#154b46;border-color:var(--teal);color:#c3fff6}.status-group button[data-status="brb"].active{background:#503c25;border-color:var(--yellow)}.status-group button[data-status="ended"].active{background:#3f2932;border-color:var(--red)}
+    .formrow{display:flex;gap:8px}.input,textarea{width:100%;min-width:0;background:#0b1523;border:1px solid #39485b;border-radius:11px;padding:11px 12px;outline:0}textarea{min-height:200px;line-height:1.55;resize:vertical}.input:focus,textarea:focus{border-color:var(--teal)}
+    .checklist{display:flex;flex-direction:column;gap:7px;margin-bottom:11px}.task{border:1px solid #304056;background:#1a2738;border-radius:11px;display:flex;align-items:center;gap:10px;min-height:48px;padding:7px 9px}.task input{accent-color:var(--teal);height:20px;width:20px;flex:none}.task label{flex:1;overflow-wrap:anywhere;font-weight:630}.task.done label{color:var(--muted);text-decoration:line-through}.task .icon-button{background:transparent;border:0;padding:8px;color:var(--muted);font-weight:bold}.task .icon-button:hover{color:var(--red)}
+    .link-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.link-grid .button{min-height:60px;font-size:13px}.link-grid .button span:first-child{font-size:19px}.link-grid .wide{grid-column:1/-1}
+    .moments{display:flex;flex-direction:column;gap:7px;max-height:240px;overflow-y:auto;margin:12px 0}.moment{border:1px solid var(--outline);border-radius:10px;padding:9px 10px;background:#1b2939;display:flex;align-items:flex-start;gap:8px}.moment time{font-weight:850;color:var(--teal);font-size:12px;white-space:nowrap}.moment span{flex:1;min-width:0;overflow-wrap:anywhere}.moment button{background:transparent;border:0;color:var(--muted);padding:0 4px;font-size:17px}
+    .chat-wrap{display:flex;flex-direction:column;gap:12px}.chat-box{background:#0b1523;border:1px dashed #3b5269;border-radius:14px;min-height:clamp(440px,68vh,750px);display:grid;place-items:center;text-align:center;padding:18px}.chat-box iframe{display:block;width:100%;height:min(71vh,790px);min-height:440px;border:0;border-radius:12px;background:#0b1523}.chat-box.ready{padding:0;border:none;display:block}.chat-box h3{margin:0 0 8px}.chat-box p{color:var(--muted);max-width:440px;margin:0 auto 14px}
+    .notes-meta{display:flex;gap:8px;justify-content:space-between;flex-wrap:wrap;margin:7px 0 12px}.note-stack{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.notes-stack textarea{min-height:240px}.notes-stack label{display:block;margin-bottom:7px;font-weight:800}
+    .footer{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:16px;color:#7b8ea3;font-size:11px}.footer b{color:var(--teal)}
+    dialog{background:#141f2f;color:var(--ink);border:1px solid #486071;border-radius:18px;max-width:530px;width:calc(100% - 24px);padding:19px;box-shadow:0 25px 110px #000b}dialog::backdrop{background:#030914cb}dialog h2{margin:0 0 7px}dialog p{color:var(--muted);font-size:12px}.settings-grid{display:grid;grid-template-columns:1fr;gap:11px}.setting label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:5px}.setting .input{min-height:44px}.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}.toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,15px);pointer-events:none;opacity:0;transition:.2s;border:1px solid var(--teal);border-radius:13px;background:#1c443f;color:#e6fffb;padding:10px 16px;z-index:50;max-width:90vw;text-align:center}.toast.show{transform:translate(-50%,0);opacity:1}
+    @media(max-width:850px){.columns{grid-template-columns:1fr}.stat .value{font-size:clamp(17px,4.5vw,24px)}.timer{font-size:clamp(46px,11vw,66px)}}
+    @media(max-width:520px){.shell{padding:10px}.header{gap:6px}.brand-mark{width:39px;height:39px;font-size:16px}.identity{gap:8px}.identity h1{font-size:17px}.kicker{font-size:9px}.header-tools{gap:6px}.time-now{display:none}.button.icon-only{padding:8px 10px}.status{font-size:9px;padding:7px 8px}.nav button{min-height:45px}.stat{padding:10px 7px}.stat .label{font-size:9px}.stat .value{font-size:17px}.stat .caption{font-size:9px}.note-stack{grid-template-columns:1fr}.status-group{gap:5px}.status-group button{font-size:11px;padding:3px}.card-head .subtle{font-size:10px}.link-grid .button{padding:9px 5px}}
+    @media(max-width:370px){.brand-mark{display:none}.identity h1{font-size:15px}.status{font-size:8px}.stat-grid{grid-template-columns:repeat(2,1fr)}.stat-grid .stat:last-child{grid-column:1/-1}.card{padding:12px}}
+
+    .nav{overflow-x:auto;scrollbar-width:thin}.nav button{flex:1 0 auto;min-width:93px;padding:0 10px;white-space:nowrap}.intro{font-size:clamp(22px,3vw,36px);font-weight:800;letter-spacing:-.035em;margin:5px 0 7px}.ops-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0 3px}.ops-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:13px}.workspace-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.workspace{display:flex;flex-direction:column;gap:7px;text-align:left;border:1px solid var(--outline);border-radius:13px;background:var(--surface-alt);color:var(--ink);padding:13px;min-height:105px}.workspace strong{font-size:14px;color:var(--teal)}.workspace span{font-size:12px;color:var(--muted)}.ops-form{display:flex;flex-direction:column;gap:10px}.form-columns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.form-columns label{font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:6px}.board-list{display:flex;flex-direction:column;gap:9px}.board-item{border:1px solid var(--outline);border-radius:12px;background:#1b293b;display:flex;align-items:center;gap:12px;padding:12px;flex-wrap:wrap}.board-copy{flex:1;min-width:170px}.board-title{font-size:14px;font-weight:800;overflow-wrap:anywhere}.board-details{font-size:11px;color:var(--muted);margin-top:5px;overflow-wrap:anywhere}.board-item select{background:#12202d;border:1px solid #52617a;border-radius:10px;color:var(--ink);padding:10px;min-height:43px;max-width:190px}.board-item .button{min-height:43px}.empty-state{font-size:13px;color:var(--muted);padding:18px 4px}.backup-controls{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    @media(max-width:850px){.ops-grid{grid-template-columns:1fr}}
+    @media(max-width:530px){.ops-stats{grid-template-columns:1fr 1fr}.ops-stats .stat:last-child{grid-column:1/-1}.form-columns{grid-template-columns:1fr}.workspace-grid{grid-template-columns:1fr 1fr}.workspace{min-height:120px;padding:10px}.workspace span{font-size:11px}.nav button{flex:0 0 auto;min-width:90px}.board-item select{flex:1}}
+  </style>
+</head>
+<body>
+<main class="shell">
+  <header class="header">
+    <div class="identity"><div class="brand-mark" aria-hidden="true">E</div><div><div class="kicker">CONTROLLED DRIFT</div><h1>ECHO</h1></div></div>
+    <div class="header-tools"><span class="time-now" id="clock">--:--</span><span class="status" id="statusBadge">READY</span><button class="button icon-only" type="button" id="settingsOpen" aria-label="Dashboard settings">⚙</button></div>
+  </header>
+  <nav class="nav" aria-label="Dashboard panels">
+    <button class="active" type="button" data-tab="home" aria-selected="true">⌂ Overview</button>
+    <button type="button" data-tab="command" aria-selected="false">◈ Stream</button>
+    <button type="button" data-tab="chat" aria-selected="false">☷ Chat</button>
+    <button type="button" data-tab="content" aria-selected="false">▦ Content</button>
+    <button type="button" data-tab="promos" aria-selected="false">◎ Promotions</button>
+    <button type="button" data-tab="notes" aria-selected="false">✎ Notes</button>
+  </nav>
+
+  
+  <section class="page" id="page-home" aria-label="Controlled Drift overview">
+    <div class="card" style="margin-bottom:13px">
+      <div class="card-head"><h2>Mission control</h2><span class="subtle">Controlled Drift · multi-channel operations</span></div>
+      <div class="intro">Plan the content. Run the stream. Keep promotion moving.</div>
+      <p class="subtle">ECHO organizes your workflow across platforms. Publishing and stream controls still happen in their own apps.</p>
+      <div class="ops-stats">
+        <div class="stat"><div class="label">Content in progress</div><div class="value" id="homeContent">0</div><div class="caption">Not yet published</div></div>
+        <div class="stat"><div class="label">Active promotions</div><div class="value" id="homePromos">0</div><div class="caption">Tracked campaigns</div></div>
+        <div class="stat"><div class="label">Stream session</div><div class="value" id="homeStream">READY</div><div class="caption">Manual status</div></div>
+      </div>
+    </div>
+    <div class="ops-grid">
+      <section class="card"><div class="card-head"><h2>Workspaces</h2></div>
+        <div class="workspace-grid">
+          <button type="button" class="workspace" data-go="command"><strong>◈ Live stream</strong><span>Timer, rundown, highlight log, launch controls</span></button>
+          <button type="button" class="workspace" data-go="content"><strong>▦ Content studio</strong><span>Ideas, drafts, scheduling, platform tracking</span></button>
+          <button type="button" class="workspace" data-go="promos"><strong>◎ Promotion desk</strong><span>Campaign goals, timelines and progress</span></button>
+          <button type="button" class="workspace" data-go="notes"><strong>✎ Notes</strong><span>Talking points, scratchpad and planning</span></button>
+        </div>
+      </section>
+      <section class="card"><div class="card-head"><h2>Publishing shortcuts</h2><span class="subtle">External platforms</span></div>
+        <div class="link-grid">
+          <a class="button" href="https://studio.youtube.com/" target="_blank" rel="noopener noreferrer">▶ YouTube Studio</a>
+          <a class="button" href="https://dashboard.twitch.tv/" target="_blank" rel="noopener noreferrer">◉ Twitch Creator</a>
+          <a class="button" href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer">▧ Instagram</a>
+          <a class="button" href="https://www.tiktok.com/" target="_blank" rel="noopener noreferrer">♫ TikTok</a>
+        </div>
+        <p class="quiet" style="margin-top:12px">Shortcuts open native services; ECHO does not post or schedule on your behalf.</p>
+      </section>
+    </div>
+  </section>
+  <section class="page" id="page-content" hidden aria-label="Content studio">
+    <div class="card">
+      <div class="card-head"><h2>Content studio</h2><span class="subtle">Organize ideas through publication</span></div>
+      <form id="contentForm" class="ops-form">
+        <input class="input" name="title" maxlength="160" placeholder="Content title or idea" aria-label="Content title" required>
+        <div class="form-columns">
+          <label>Platform<select class="input" name="platform"><option>Twitch</option><option>YouTube</option><option>Instagram</option><option>TikTok</option><option>Multi-platform</option><option>Other</option></select></label>
+          <label>Format<select class="input" name="format"><option>Video</option><option>Short / Reel</option><option>Live</option><option>Post</option><option>Clip</option><option>Other</option></select></label>
+          <label>Target date<input class="input" type="date" name="due" aria-label="Target date"></label>
+        </div>
+        <div class="formrow"><button class="button primary" type="submit">+ Add content</button><button class="button" id="contentExport" type="button">↓ Export CSV</button></div>
+      </form>
+    </div>
+    <section class="card" style="margin-top:13px"><div class="card-head"><h2>Publishing pipeline</h2><span class="subtle" id="contentCount">0 items</span></div>
+      <div class="board-list" id="contentItems"></div>
+      <p class="quiet">Changing an item's status tracks your work in ECHO; it does not publish anything.</p>
+    </section>
+  </section>
+  <section class="page" id="page-promos" hidden aria-label="Promotional campaigns">
+    <div class="card">
+      <div class="card-head"><h2>Promotion desk</h2><span class="subtle">Campaign planner</span></div>
+      <form id="promoForm" class="ops-form">
+        <input class="input" name="title" maxlength="160" placeholder="Campaign name (e.g. Sunday golf stream)" aria-label="Campaign name" required>
+        <input class="input" name="goal" maxlength="220" placeholder="Goal or call to action" aria-label="Campaign goal">
+        <div class="form-columns">
+          <label>Channel<select class="input" name="platform"><option>Multi-platform</option><option>Twitch</option><option>YouTube</option><option>Instagram</option><option>TikTok</option><option>Other</option></select></label>
+          <label>Target date<input class="input" name="due" type="date"></label>
+        </div>
+        <div class="formrow"><button class="button primary" type="submit">+ Add promotion</button><button class="button" id="promoExport" type="button">↓ Export CSV</button></div>
+      </form>
+    </div>
+    <section class="card" style="margin-top:13px"><div class="card-head"><h2>Campaign tracker</h2><span class="subtle" id="promoCount">0 campaigns</span></div><div id="promoItems" class="board-list"></div>
+      <p class="quiet">Plan campaigns here, then publish through the platform shortcuts. No social account permissions are required.</p>
+    </section>
+  </section>
+
+  <section class="page" id="page-command" hidden aria-label="ECHO stream operations">
+    <div class="stat-grid">
+      <div class="stat"><div class="label">Session</div><div class="value" id="statState">READY</div><div class="caption">Manual status</div></div>
+      <div class="stat"><div class="label">Elapsed time</div><div class="value" id="statDuration">00:00:00</div><div class="caption">Manual timer</div></div>
+      <div class="stat"><div class="label">Rundown</div><div class="value" id="statTasks">0 / 0</div><div class="caption">Items complete</div></div>
+    </div>
+    <div class="columns">
+      <div class="stack">
+        <section class="card" aria-labelledby="session-heading">
+          <div class="card-head"><h2 id="session-heading">Session timer</h2><span class="subtle">Independent of OBS</span></div>
+          <div class="timer" id="bigTimer" role="timer">00:00:00</div>
+          <div class="timer-controls"><button class="button primary" id="timerStart" type="button">▶ Start</button><button class="button" id="timerPause" type="button">Ⅱ Pause</button><button class="button ghost" id="timerReset" type="button">↺ Reset</button></div>
+          <div class="status-group" role="group" aria-label="Manually select stream status"><button type="button" class="active" data-status="ready">Ready</button><button type="button" data-status="live">● Live</button><button type="button" data-status="brb">BRB</button><button type="button" data-status="ended">Ended</button></div>
+        </section>
+        <section class="card" aria-labelledby="moments-heading">
+          <div class="card-head"><h2 id="moments-heading">Moment log</h2><button class="button small" id="exportMoments" type="button">↓ Export</button></div>
+          <div class="formrow"><input class="input" id="momentInput" aria-label="Describe stream moment" placeholder="Boss fight, great quote, funny moment…" maxlength="180"><button class="button primary" id="addMoment" type="button">+ Mark</button></div>
+          <div id="momentList" class="moments" aria-live="polite"></div>
+          <div class="subtle">Manual timestamps to find highlights later. Does not create Twitch markers.</div>
+        </section>
+      </div>
+      <div class="stack">
+        <section class="card" aria-labelledby="rundown-heading">
+          <div class="card-head"><h2 id="rundown-heading">Stream rundown</h2><button class="button small" id="resetTasks" type="button">Clear checks</button></div>
+          <div class="checklist" id="tasks"></div>
+          <form id="newTaskForm" class="formrow"><input class="input" id="newTask" maxlength="120" aria-label="New rundown item" placeholder="Add a segment or reminder" required><button class="button primary" type="submit">+ Add</button></form>
+        </section>
+        <section class="card" aria-labelledby="links-heading">
+          <div class="card-head"><h2 id="links-heading">Quick launch</h2><span class="subtle">Opens another tab/app</span></div>
+          <div class="link-grid">
+            <a class="button" id="launchManager" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">▤</span> Twitch Manager</a>
+            <a class="button" id="launchChat" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">☷</span> Popout Chat</a>
+            <a class="button" id="launchClip" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">✂</span> Twitch Clips</a>
+            <a class="button" id="launchYouTube" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">▶</span> YouTube Studio</a>
+            <a class="button wide" id="launchCustom" target="_blank" rel="noopener noreferrer" hidden><span aria-hidden="true">↗</span><span id="customLinkLabel">My shortcut</span></a>
+          </div>
+          <p class="quiet" style="margin:10px 0 0">Use your existing OBS controller beside this dashboard in tablet split-screen.</p>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <section class="page" id="page-chat" hidden aria-label="Twitch chat">
+    <section class="card chat-wrap"><div class="card-head"><h2>Twitch chat · <span id="chatChannel">controlled_drift</span></h2><button class="button small" id="chatReload" type="button">↻ Reload chat</button></div>
+      <div class="chat-box" id="chatBox"><div><h3>Load Twitch chat</h3><p>Chat can be embedded on your GitHub Pages site. If Twitch sign-in doesn't work inside the frame, use Popout Chat instead.</p><button class="button primary" id="chatLoad" type="button">Load chat</button></div></div>
+      <div class="formrow"><a class="button primary full" id="chatExternal" target="_blank" rel="noopener noreferrer">↗ Open popout chat</a></div>
+    </section>
+  </section>
+
+  <section class="page" id="page-notes" hidden aria-label="Stream notes">
+    <section class="card notes-stack"><div class="card-head"><h2>My live notes</h2><span class="subtle" id="saveIndicator">Saved on this device</span></div>
+      <div class="note-stack"><div><label for="talkingPoints">Talking points</label><textarea id="talkingPoints" placeholder="Things to cover on stream, audience questions, reminders…"></textarea></div><div><label for="scratchPad">Scratch pad</label><textarea id="scratchPad" placeholder="Names, quests, thoughts, links, anything you want to remember…"></textarea></div></div>
+      <div class="notes-meta"><div class="subtle">Autosaves privately in this browser, not to GitHub.</div><button class="button small" type="button" id="exportNotes">↓ Export notes</button></div>
+    </section>
+  </section>
+  <footer class="footer"><span>CONTROLLED DRIFT · <b>ECHO · OPERATIONS</b> · v3.0</span><span>Stream · Content · Promotion · Local device storage</span></footer>
+</main>
+
+<dialog id="settingsDialog" aria-labelledby="settingsTitle">
+  <form id="settingsForm"><h2 id="settingsTitle">Dashboard settings</h2><p>Configure the Twitch channel and quick links. Settings stay on this device, not in the public GitHub repository.</p>
+    <div class="settings-grid"><div class="setting"><label for="settingChannel">Twitch channel</label><input class="input" id="settingChannel" placeholder="controlled_drift" required spellcheck="false"></div>
+      <div class="setting"><label for="settingYoutube">YouTube Studio or channel URL (https://)</label><input class="input" id="settingYoutube" type="url" placeholder="https://studio.youtube.com/"></div>
+      <div class="setting"><label for="settingCustomLabel">Optional fifth quick link label</label><input class="input" id="settingCustomLabel" maxlength="40" placeholder="e.g. Stream schedule"></div>
+      <div class="setting"><label for="settingCustomUrl">Optional fifth link URL (https://)</label><input class="input" id="settingCustomUrl" type="url" placeholder="https://example.com"></div>
+    </div>
+    <div class="setting"><label>Data backup and transfer</label><p class="quiet">Edits stay in this browser. To move them to another device, export a backup and import it there.</p>
+    <div class="backup-controls"><button class="button small" type="button" id="backupExport">↓ Download backup</button><button class="button small" type="button" id="backupImport">↑ Restore backup</button><input type="file" id="backupFile" accept=".json,application/json" hidden></div></div>
+    <div class="modal-actions"><button class="button ghost" type="button" id="settingsClose">Cancel</button><button class="button primary" type="submit">Save settings</button></div>
+  </form>
+</dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const STORAGE_KEY = 'controlled-drift-command-v2';
+  const defaults = {channel:'controlled_drift',youtube:'https://studio.youtube.com/',customLabel:'',customUrl:'',status:'ready',running:false,startedAt:null,elapsedMs:0,moments:[],tasks:[{id:1,text:'Go live and check audio',done:false},{id:2,text:'Welcome viewers',done:false},{id:3,text:'Today’s stream goals',done:false},{id:4,text:'Community check-in',done:false},{id:5,text:'Wrap up and say goodbye',done:false}],nextTaskId:6,talkingPoints:'',scratchPad:'',contentItems:[],promoItems:[]};
+  let saved={};try { const raw=localStorage.getItem(STORAGE_KEY);if(raw) saved=JSON.parse(raw)||{}; } catch(e) {console.warn('Storage unavailable',e)}
+  const state={...defaults,...saved};
+  if(!Array.isArray(state.tasks))state.tasks=defaults.tasks; if(!Array.isArray(state.moments))state.moments=[];
+  const validStatuses=['ready','live','brb','ended'];if(!validStatuses.includes(state.status))state.status='ready';
+  const persist=()=>{try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){console.warn('Save failed',e)}};
+  let toastTimeout;
+  function notify(msg){$('toast').textContent=msg;$('toast').classList.add('show');clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>$('toast').classList.remove('show'),2500)}
+  function pad(n){return String(n).padStart(2,'0')}
+  function duration(ms){const secs=Math.floor(Math.max(0,ms)/1000);return `${pad(Math.floor(secs/3600))}:${pad(Math.floor(secs/60)%60)}:${pad(secs%60)}`}
+  function elapsed(){return Math.max(0,Number(state.elapsedMs)||0)+(state.running&&Number.isFinite(state.startedAt)?Math.max(0,Date.now()-state.startedAt):0)}
+  function pauseClock(){if(state.running){state.elapsedMs=elapsed();state.startedAt=null;state.running=false;persist()}}
+  function startClock(){if(!state.running){state.startedAt=Date.now();state.running=true;persist()}}
+  function updateDisplay(){let t=duration(elapsed());$('bigTimer').textContent=t;$('statDuration').textContent=t;$('clock').textContent=new Intl.DateTimeFormat(undefined,{hour:'numeric',minute:'2-digit'}).format(new Date());$('timerStart').disabled=state.running;$('timerPause').disabled=!state.running;$('timerStart').textContent=state.running?'▶ Running':'▶ Start'}
+  function setStatus(status){if(!validStatuses.includes(status))return;state.status=status;if(status==='live')startClock();if(status==='ended'||status==='ready')pauseClock();persist();renderStatus()}
+  function renderStatus(){const label={ready:'READY',live:'LIVE',brb:'BRB',ended:'ENDED'}[state.status];$('statusBadge').textContent=label;$('statusBadge').className='status '+state.status;$('statState').textContent=label;$('statState').style.color=state.status==='live'?'var(--red)':state.status==='brb'?'var(--yellow)':'var(--ink)';document.querySelectorAll('[data-status]').forEach(b=>b.classList.toggle('active',b.dataset.status===state.status));updateDisplay()}
+  $('timerStart').onclick=()=>{startClock();if(state.status==='ready'||state.status==='ended')state.status='live';persist();renderStatus()};
+  $('timerPause').onclick=()=>{pauseClock();renderStatus()};
+  $('timerReset').onclick=()=>{if(!confirm('Reset the session timer to zero? Moment log and rundown will be kept.'))return;pauseClock();state.elapsedMs=0;state.status='ready';persist();renderStatus();notify('Session timer reset')};
+  document.querySelectorAll('[data-status]').forEach(b=>b.onclick=()=>setStatus(b.dataset.status));
+  function renderTasks(){const root=$('tasks');root.replaceChildren();state.tasks.forEach(task=>{const row=document.createElement('div');row.className='task'+(task.done?' done':'');const input=document.createElement('input');input.type='checkbox';input.id='task-'+task.id;input.checked=!!task.done;input.onchange=()=>{task.done=input.checked;persist();renderTasks()};const label=document.createElement('label');label.htmlFor=input.id;label.textContent=task.text;const remove=document.createElement('button');remove.type='button';remove.className='icon-button';remove.title='Remove item';remove.setAttribute('aria-label','Remove '+task.text);remove.textContent='×';remove.onclick=()=>{state.tasks=state.tasks.filter(t=>t!==task);persist();renderTasks()};row.append(input,label,remove);root.append(row)});if(!state.tasks.length){let msg=document.createElement('p');msg.className='subtle';msg.textContent='No segments yet. Add one below.';root.append(msg)}$('statTasks').textContent=`${state.tasks.filter(t=>t.done).length} / ${state.tasks.length}`}
+  $('newTaskForm').onsubmit=e=>{e.preventDefault();const text=$('newTask').value.trim();if(!text)return;state.tasks.push({id:state.nextTaskId++,text,done:false});$('newTask').value='';persist();renderTasks()};
+  $('resetTasks').onclick=()=>{state.tasks.forEach(t=>t.done=false);persist();renderTasks();notify('Rundown checks cleared')};
+  function renderMoments(){const root=$('momentList');root.replaceChildren();if(!state.moments.length){const x=document.createElement('p');x.className='subtle';x.textContent='No moments recorded yet. Use + Mark when something worth clipping happens.';root.append(x);return}state.moments.slice().reverse().forEach(m=>{const item=document.createElement('div');item.className='moment';const time=document.createElement('time');time.textContent=m.elapsed;const desc=document.createElement('span');desc.textContent=m.text;const del=document.createElement('button');del.type='button';del.textContent='×';del.title='Remove moment';del.setAttribute('aria-label','Remove moment');del.onclick=()=>{state.moments=state.moments.filter(e=>e.id!==m.id);persist();renderMoments()};item.append(time,desc,del);root.append(item)})}
+  function addMoment(){const text=$('momentInput').value.trim()||'Moment to review';state.moments.push({id:Date.now()+'-'+Math.random().toString(36).slice(2),elapsed:duration(elapsed()),text,date:new Date().toISOString()});$('momentInput').value='';persist();renderMoments();notify('Moment saved')}
+  $('addMoment').onclick=addMoment;$('momentInput').addEventListener('keydown',e=>{if(e.key==='Enter')addMoment()});
+  function download(name,text){const b=new Blob([text],{type:'text/plain;charset=utf-8'});const url=URL.createObjectURL(b);const a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500)}
+  $('exportMoments').onclick=()=>{const lines=state.moments.map(m=>`${m.elapsed} — ${m.text}`);download('echo-moments.txt',['ECHO / CONTROLLED DRIFT — MOMENT LOG','',...lines].join('\n'));notify('Moment log exported')};
+  $('exportNotes').onclick=()=>{download('echo-notes.txt',['ECHO / CONTROLLED DRIFT — STREAM NOTES','', 'TALKING POINTS',state.talkingPoints,'','SCRATCH PAD',state.scratchPad].join('\n'));notify('Notes exported')};
+  ['talkingPoints','scratchPad'].forEach(id=>{$(id).value=state[id]||'';$(id).addEventListener('input',()=>{state[id]=$(id).value;persist();$('saveIndicator').textContent='Saved on this device'})});
+  function goodUrl(value){try{const url=new URL(value);return url.protocol==='https:'?url.href:null}catch{return null}}
+  function updateLinks(){const channel=String(state.channel||'controlled_drift').replace(/^@/,'').trim().replace(/[^a-zA-Z0-9_]/g,'')||'controlled_drift';state.channel=channel;const manager=`https://dashboard.twitch.tv/u/${encodeURIComponent(channel)}/stream-manager`;const chat=`https://www.twitch.tv/popout/${encodeURIComponent(channel)}/chat?popout=`;$('launchManager').href=manager;$('launchChat').href=chat;$('launchClip').href=`https://www.twitch.tv/${encodeURIComponent(channel)}/clip`;$('launchYouTube').href=goodUrl(state.youtube)||'https://studio.youtube.com/';$('chatExternal').href=chat;$('chatChannel').textContent=channel;const custom=goodUrl(state.customUrl);$('launchCustom').hidden=!custom;if(custom){$('launchCustom').href=custom;$('customLinkLabel').textContent=state.customLabel||'My shortcut'}}
+  function loadChat(){const root=$('chatBox');const host=location.hostname;root.classList.remove('ready');root.replaceChildren();if(location.protocol!=='https:'||!host){const wrapper=document.createElement('div');const heading=document.createElement('h3');heading.textContent='Chat embed requires GitHub Pages';const para=document.createElement('p');para.textContent='When published to your HTTPS GitHub Pages domain, embedded Twitch chat can appear here. Until then, use Open popout chat.';wrapper.append(heading,para);root.append(wrapper);return}const iframe=document.createElement('iframe');iframe.title='Twitch chat';iframe.loading='eager';iframe.setAttribute('allow','autoplay');iframe.src=`https://www.twitch.tv/embed/${encodeURIComponent(state.channel)}/chat?parent=${encodeURIComponent(host)}&darkpopout`;root.append(iframe);root.classList.add('ready')}
+  $('chatReload').onclick=loadChat;
+  $('chatLoad').onclick=loadChat;
+  const tabs=document.querySelectorAll('[data-tab]');function activateTab(tab){tabs.forEach(b=>{const active=b.dataset.tab===tab;b.classList.toggle('active',active);b.setAttribute('aria-selected',String(active))});document.querySelectorAll('.page').forEach(p=>p.hidden=p.id!=='page-'+tab);if(tab==='chat'&&!$('chatBox').querySelector('iframe'))loadChat()}
+  tabs.forEach(b=>b.onclick=()=>activateTab(b.dataset.tab));
+  $('settingsOpen').onclick=()=>{$('settingChannel').value=state.channel;$('settingYoutube').value=state.youtube;$('settingCustomLabel').value=state.customLabel;$('settingCustomUrl').value=state.customUrl;$('settingsDialog').showModal()};
+  $('settingsClose').onclick=()=>$('settingsDialog').close();
+  $('settingsForm').onsubmit=e=>{e.preventDefault();const youtube=$('settingYoutube').value.trim(),custom=$('settingCustomUrl').value.trim();if((youtube&&!goodUrl(youtube))||(custom&&!goodUrl(custom))){notify('Links must use https://');return}state.channel=$('settingChannel').value.trim();state.youtube=youtube||'https://studio.youtube.com/';state.customLabel=$('settingCustomLabel').value.trim();state.customUrl=custom;updateLinks();persist();$('settingsDialog').close();if($('chatBox').querySelector('iframe'))loadChat();notify('Settings saved')};
+  updateLinks();renderTasks();renderMoments();renderStatus();setInterval(updateDisplay,1000);updateDisplay();
+  (function extension(){
+  const stagesContent=['Idea','Drafting','Ready','Scheduled','Published'];
+  const stagesPromo=['Planning','Active','Complete'];
+  if(!Array.isArray(state.contentItems))state.contentItems=[];
+  if(!Array.isArray(state.promoItems))state.promoItems=[];
+  const newId=()=>Date.now()+'-'+Math.random().toString(36).slice(2);
+  const safe=(s)=>String(s||'').trim();
+  const sorted=(arr)=>arr.slice().sort((a,b)=>(a.due||'9999-12-31').localeCompare(b.due||'9999-12-31'));
+  const element=(tag,cls,txt)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(txt!==undefined)el.textContent=txt;return el};
+  function updateOverview(){
+    $('homeContent').textContent=state.contentItems.filter(x=>x.stage!=='Published').length;
+    $('homePromos').textContent=state.promoItems.filter(x=>x.stage==='Active').length;
+    $('homeStream').textContent=String(state.status||'ready').toUpperCase();
+  }
+  function boardRow(item,stages,arr,render){
+    const root=element('div','board-item');
+    const body=element('div','board-copy');
+    body.append(element('div','board-title',item.title),element('div','board-details',[item.platform,item.format,item.goal,item.due?('Target '+item.due):'No date'].filter(Boolean).join(' · ')));
+    const select=element('select');select.setAttribute('aria-label','Status for '+item.title);
+    stages.forEach(stage=>{const option=document.createElement('option');option.value=stage;option.textContent=stage;option.selected=item.stage===stage;select.append(option)});
+    select.addEventListener('change',()=>{item.stage=select.value;persist();render();updateOverview()});
+    const del=element('button','button small ghost','Remove');del.type='button';del.setAttribute('aria-label','Remove '+item.title);del.onclick=()=>{if(!confirm('Remove "'+item.title+'" from ECHO?'))return;const index=arr.findIndex(v=>v.id===item.id);if(index>=0)arr.splice(index,1);persist();render();updateOverview()};
+    root.append(body,select,del);return root;
+  }
+  function renderContent(){
+    const root=$('contentItems');root.replaceChildren();$('contentCount').textContent=state.contentItems.length+' items';
+    const items=sorted(state.contentItems);
+    if(!items.length)root.append(element('p','empty-state','No content planned yet. Capture your first idea above.'));
+    else items.forEach(i=>root.append(boardRow(i,stagesContent,state.contentItems,renderContent)));
+  }
+  function renderPromos(){
+    const root=$('promoItems');root.replaceChildren();$('promoCount').textContent=state.promoItems.length+' campaigns';
+    const items=sorted(state.promoItems);
+    if(!items.length)root.append(element('p','empty-state','No campaigns yet. Add a promotion to start tracking its progress.'));
+    else items.forEach(i=>root.append(boardRow(i,stagesPromo,state.promoItems,renderPromos)));
+  }
+  $('contentForm').addEventListener('submit',event=>{
+    event.preventDefault();const form=event.currentTarget, data=new FormData(form);
+    const title=safe(data.get('title'));if(!title)return;
+    state.contentItems.push({id:newId(),title,platform:safe(data.get('platform')),format:safe(data.get('format')),due:safe(data.get('due')),stage:'Idea'});
+    form.reset();persist();renderContent();updateOverview();notify('Content item added');
+  });
+  $('promoForm').addEventListener('submit',event=>{
+    event.preventDefault();const form=event.currentTarget,data=new FormData(form);
+    const title=safe(data.get('title'));if(!title)return;
+    state.promoItems.push({id:newId(),title,goal:safe(data.get('goal')),platform:safe(data.get('platform')),due:safe(data.get('due')),stage:'Planning'});
+    form.reset();persist();renderPromos();updateOverview();notify('Promotion added');
+  });
+  function csv(rows){return rows.map(row=>row.map(val=>'"'+String(val==null?'':val).replace(/"/g,'""')+'"').join(',')).join('\r\n')}
+  $('contentExport').onclick=()=>download('echo-content.csv',csv([['Title','Platform','Format','Target date','Status'],...state.contentItems.map(v=>[v.title,v.platform,v.format,v.due,v.stage])]));
+  $('promoExport').onclick=()=>download('echo-promotions.csv',csv([['Campaign','Goal','Platform','Target date','Status'],...state.promoItems.map(v=>[v.title,v.goal,v.platform,v.due,v.stage])]));
+  $('backupExport').onclick=()=>{
+    download('echo-backup.json',JSON.stringify({app:'ECHO',version:3,createdAt:new Date().toISOString(),data:state},null,2));notify('Backup downloaded');
+  };
+  $('backupImport').onclick=()=>$('backupFile').click();
+  $('backupFile').addEventListener('change',async event=>{
+    const file=event.target.files?.[0];event.target.value='';if(!file)return;
+    if(file.size>2_000_000){notify('Backup too large');return}
+    try{
+      const input=JSON.parse(await file.text()),record=input.data;
+      if(input.app!=='ECHO'||!record||typeof record!=='object'||Array.isArray(record)||!Array.isArray(record.contentItems)||!Array.isArray(record.promoItems)){notify('Not a valid ECHO v3 backup');return}
+      if(!confirm('Restore this backup? It replaces data saved on this device.'))return;
+      Object.assign(state,record);persist();location.reload();
+    }catch(e){notify('Could not read backup')}
+  });
+  document.querySelectorAll('[data-go]').forEach(button=>button.onclick=()=>activateTab(button.dataset.go));
+  renderContent();renderPromos();updateOverview();activateTab('home');
+  setInterval(updateOverview,5000);
+})();
+})();
+</script>
+</body>
+</html>
