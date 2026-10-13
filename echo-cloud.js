@@ -15,6 +15,7 @@
  const db=window.supabase.createClient('https://zdurujqwhxqrwbhwzzxg.supabase.co',
   "sb_publishable_Xa0DTx_PbvtynbiQN6_xNQ_l1D55vzK",
   {auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,flowType:'pkce'}});
+ window.ECHO.cloudClient=db; // Reuse one Supabase Auth instance for owner-scoped integrations.
  let user=null,enabled=false,checking=false,writing=false,busy=false,dirty=false,version=null,baseline=null,pendingTimer=null,lastUserId=null;
  const modeKey=id=>'echo-cloud-auto:'+id;
  const metaKey=id=>'echo-cloud-meta:'+id;
