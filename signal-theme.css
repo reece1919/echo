@@ -35,3 +35,8 @@ body:before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opa
 footer,.footer{color:#91a6a5}
 @media(max-width:600px){.header{padding:10px 11px}.nav button{min-width:88px;font-size:10px}.card:before{left:12px}}
 @media(prefers-reduced-motion:reduce){.button,.nav button{transition:none}}
+
+/* Branded silhouette: keep the ECHO console hexagon uncropped in the header. */
+.identity .brand-mark{width:52px;height:52px;min-width:52px;display:grid;place-items:center;border:0;border-radius:0;background:transparent;box-shadow:none;padding:0}
+.identity .brand-mark img{display:block;width:52px;height:52px;object-fit:contain;border-radius:0;clip-path:none}
+@media(max-width:520px){.identity .brand-mark{width:43px;height:43px;min-width:43px}.identity .brand-mark img{width:43px;height:43px}}
