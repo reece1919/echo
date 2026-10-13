@@ -6,7 +6,8 @@
 create table if not exists public.echo_workspaces (
   user_id uuid primary key references auth.users(id) on delete cascade,
   data jsonb not null default '{}'::jsonb,
-  updated_at timestamptz not null default now()
+  updated_at timestamptz not null default now(),
+  revision bigint not null default 0
 );
 
 -- Explicit Data API grants are required on new Supabase projects.
@@ -34,3 +35,7 @@ create policy "echo_workspace_delete_own"
 
 comment on table public.echo_workspaces is
   'Private per-user ECHO workspace snapshot, protected by ownership-based RLS.';
+
+-- Revision column for pre-v4 deployments; safe to rerun.
+alter table public.echo_workspaces add column if not exists revision bigint not null default 0;
+comment on column public.echo_workspaces.revision is 'Optimistic concurrency version for safer cross-device cloud sync.';
