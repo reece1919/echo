@@ -39,6 +39,8 @@
     @media(max-width:850px){.ops-grid{grid-template-columns:1fr}}
     @media(max-width:530px){.ops-stats{grid-template-columns:1fr 1fr}.ops-stats .stat:last-child{grid-column:1/-1}.form-columns{grid-template-columns:1fr}.workspace-grid{grid-template-columns:1fr 1fr}.workspace{min-height:120px;padding:10px}.workspace span{font-size:11px}.nav button{flex:0 0 auto;min-width:90px}.board-item select{flex:1}}
     .cloud-panel{border:1px solid var(--outline);border-radius:14px;padding:14px;background:#132132}.cloud-panel h3{margin:0 0 8px;font-size:17px;color:#70d8cb}.cloud-state{font-size:13px;margin:10px 0;color:#bceae4}.cloud-actions{display:flex;flex-direction:column;gap:9px;margin:10px 0}.cloud-actions label{font-size:12px;color:var(--muted)}.cloud-panel [hidden]{display:none!important}
+    .insight-bars{display:flex;flex-direction:column;gap:12px}.insight-row{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px}.insight-bar{height:8px;border-radius:8px;background:#304157;overflow:hidden}.insight-bar>span{height:100%;background:#65cfc0;display:block;border-radius:8px}.echo-launchpad{margin:0 0 13px}.echo-launchpad .form-columns{grid-template-columns:repeat(2,minmax(0,1fr))}.echo-launchpad .launchpad-form{display:flex;flex-direction:column;gap:10px}.echo-launchpad .button.primary{max-width:230px}.cloud-panel .cloud-connection{font-size:12px}
+    @media(max-width:530px){.echo-launchpad .form-columns{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
@@ -49,10 +51,11 @@
   </header>
   <nav class="nav" aria-label="Dashboard panels">
     <button class="active" type="button" data-tab="home" aria-selected="true">⌂ Overview</button>
-    <button type="button" data-tab="command" aria-selected="false">◈ Stream</button>
+    <button type="button" data-tab="command" aria-selected="false">◈ LIVE</button>
     <button type="button" data-tab="chat" aria-selected="false">☷ Chat</button>
-    <button type="button" data-tab="content" aria-selected="false">▦ Content</button>
-    <button type="button" data-tab="promos" aria-selected="false">◎ Promotions</button>
+    <button type="button" data-tab="content" aria-selected="false">▦ STUDIO</button>
+    <button type="button" data-tab="promos" aria-selected="false">◎ PROMOTE</button>
+    <button type="button" data-tab="insights" aria-selected="false">▥ INSIGHTS</button>
     <button type="button" data-tab="notes" aria-selected="false">✎ Notes</button>
   </nav>
 
@@ -124,7 +127,7 @@
     </section>
   </section>
 
-  <section class="page" id="page-command" hidden aria-label="ECHO stream operations">
+  <section class="page" id="page-command" hidden aria-label="ECHO LIVE stream operations">
     <div class="stat-grid">
       <div class="stat"><div class="label">Session</div><div class="value" id="statState">READY</div><div class="caption">Manual status</div></div>
       <div class="stat"><div class="label">Elapsed time</div><div class="value" id="statDuration">00:00:00</div><div class="caption">Manual timer</div></div>
@@ -179,7 +182,18 @@
       <div class="notes-meta"><div class="subtle">Autosaves privately in this browser, not to GitHub.</div><button class="button small" type="button" id="exportNotes">↓ Export notes</button></div>
     </section>
   </section>
-  <footer class="footer"><span>CONTROLLED DRIFT · <b>ECHO · OPERATIONS</b> · v3.1</span><span>Stream · Content · Promotion · Optional private cloud</span></footer>
+  <section class="page" id="page-insights" hidden aria-label="Content and campaign insights">
+  <div class="card">
+    <div class="card-head"><h2>Controlled Drift · Insights</h2><span class="subtle">Your production activity, not platform analytics</span></div>
+    <p class="quiet">These figures summarize work recorded inside ECHO. Live viewers, followers, revenue and video views require authenticated platform integrations and are not connected yet.</p>
+    <div id="insightStats" class="ops-stats"></div>
+  </div>
+  <div class="ops-grid" style="margin-top:13px">
+    <section class="card"><div class="card-head"><h2>Content by platform</h2></div><div id="insightPlatforms" class="insight-bars"></div></section>
+    <section class="card"><div class="card-head"><h2>Production pipeline</h2></div><div id="insightStages" class="insight-bars"></div></section>
+  </div>
+</section>
+  <footer class="footer"><span>CONTROLLED DRIFT · <b>ECHO · OPERATIONS</b> · v4.0</span><span>Stream · Content · Promotion · Optional private cloud</span></footer>
 </main>
 
 <dialog id="settingsDialog" aria-labelledby="settingsTitle">
@@ -225,7 +239,7 @@
   const state={...defaults,...saved};
   if(!Array.isArray(state.tasks))state.tasks=defaults.tasks; if(!Array.isArray(state.moments))state.moments=[];
   const validStatuses=['ready','live','brb','ended'];if(!validStatuses.includes(state.status))state.status='ready';
-  const persist=()=>{try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}catch(e){console.warn('Save failed',e)}};
+  const persist=()=>{try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state));window.dispatchEvent(new Event('echo:changed'));}catch(e){console.warn('Save failed',e)}};
   let toastTimeout;
   function notify(msg){$('toast').textContent=msg;$('toast').classList.add('show');clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>$('toast').classList.remove('show'),2500)}
   function pad(n){return String(n).padStart(2,'0')}
@@ -243,7 +257,7 @@
   function renderTasks(){const root=$('tasks');root.replaceChildren();state.tasks.forEach(task=>{const row=document.createElement('div');row.className='task'+(task.done?' done':'');const input=document.createElement('input');input.type='checkbox';input.id='task-'+task.id;input.checked=!!task.done;input.onchange=()=>{task.done=input.checked;persist();renderTasks()};const label=document.createElement('label');label.htmlFor=input.id;label.textContent=task.text;const remove=document.createElement('button');remove.type='button';remove.className='icon-button';remove.title='Remove item';remove.setAttribute('aria-label','Remove '+task.text);remove.textContent='×';remove.onclick=()=>{state.tasks=state.tasks.filter(t=>t!==task);persist();renderTasks()};row.append(input,label,remove);root.append(row)});if(!state.tasks.length){let msg=document.createElement('p');msg.className='subtle';msg.textContent='No segments yet. Add one below.';root.append(msg)}$('statTasks').textContent=`${state.tasks.filter(t=>t.done).length} / ${state.tasks.length}`}
   $('newTaskForm').onsubmit=e=>{e.preventDefault();const text=$('newTask').value.trim();if(!text)return;state.tasks.push({id:state.nextTaskId++,text,done:false});$('newTask').value='';persist();renderTasks()};
   $('resetTasks').onclick=()=>{state.tasks.forEach(t=>t.done=false);persist();renderTasks();notify('Rundown checks cleared')};
-  function renderMoments(){const root=$('momentList');root.replaceChildren();if(!state.moments.length){const x=document.createElement('p');x.className='subtle';x.textContent='No moments recorded yet. Use + Mark when something worth clipping happens.';root.append(x);return}state.moments.slice().reverse().forEach(m=>{const item=document.createElement('div');item.className='moment';const time=document.createElement('time');time.textContent=m.elapsed;const desc=document.createElement('span');desc.textContent=m.text;const del=document.createElement('button');del.type='button';del.textContent='×';del.title='Remove moment';del.setAttribute('aria-label','Remove moment');del.onclick=()=>{state.moments=state.moments.filter(e=>e.id!==m.id);persist();renderMoments()};item.append(time,desc,del);root.append(item)})}
+  function renderMoments(){const root=$('momentList');root.replaceChildren();if(!state.moments.length){const x=document.createElement('p');x.className='subtle';x.textContent='No moments recorded yet. Use + Mark when something worth clipping happens.';root.append(x);return}state.moments.slice().reverse().forEach(m=>{const item=document.createElement('div');item.className='moment';const time=document.createElement('time');time.textContent=m.elapsed;const desc=document.createElement('span');desc.textContent=m.text;const del=document.createElement('button');del.type='button';del.textContent='×';del.title='Remove moment';del.setAttribute('aria-label','Remove moment');del.onclick=()=>{state.moments=state.moments.filter(e=>e.id!==m.id);persist();renderMoments()};const clip=document.createElement('button');clip.type='button';clip.className='button small';clip.textContent='→ Studio';clip.title='Create a content production task from this moment';clip.onclick=()=>window.ECHO?.createClipFromMoment(m);item.append(time,desc,clip,del);root.append(item)})}
   function addMoment(){const text=$('momentInput').value.trim()||'Moment to review';state.moments.push({id:Date.now()+'-'+Math.random().toString(36).slice(2),elapsed:duration(elapsed()),text,date:new Date().toISOString()});$('momentInput').value='';persist();renderMoments();notify('Moment saved')}
   $('addMoment').onclick=addMoment;$('momentInput').addEventListener('keydown',e=>{if(e.key==='Enter')addMoment()});
   function download(name,text){const b=new Blob([text],{type:'text/plain;charset=utf-8'});const url=URL.createObjectURL(b);const a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500)}
@@ -327,12 +341,46 @@
     }catch(e){notify('Could not read backup')}
   });
   document.querySelectorAll('[data-go]').forEach(button=>button.onclick=()=>activateTab(button.dataset.go));
+  // Safe bridge for the optional ECHO cloud service and v4 workspaces.
+  const cloudFields=['channel','youtube','customLabel','customUrl','tasks','nextTaskId','talkingPoints','scratchPad','contentItems','promoItems','moments'];
+  const clone = data => JSON.parse(JSON.stringify(data));
+  function refreshWorkspace(){
+    renderContent();renderPromos();renderTasks();renderMoments();renderStatus();updateOverview();updateLinks();
+    ['talkingPoints','scratchPad'].forEach(id=>{if(document.activeElement!==$(id))$(id).value=state[id]||''});
+    window.dispatchEvent(new Event('echo:render'));
+  }
+  window.ECHO={
+    snapshot:()=>clone(state),
+    syncSnapshot:()=>Object.fromEntries(cloudFields.map(field=>[field,clone(state[field])])),
+    modify(fn){fn(state);persist();refreshWorkspace()},
+    navigate:activateTab,
+    refresh:refreshWorkspace,
+    restore(data){
+      for(const field of cloudFields){if(Object.prototype.hasOwnProperty.call(data,field))state[field]=clone(data[field])}
+      try{localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}catch(error){notify('Could not save restored data');throw error}
+      refreshWorkspace();
+    },
+    createClipFromMoment(moment){
+      const existing=state.contentItems.find(i=>i.originMomentId===moment.id&&i.platform==='YouTube');
+      if(existing){activateTab('content');notify('This highlight is already in Studio');return}
+      state.contentItems.push({
+        id:Date.now()+'-'+Math.random().toString(36).slice(2),
+        title:'Clip: '+String(moment.text||'Stream highlight').slice(0,140),
+        platform:'YouTube',format:'Short / Reel',stage:'Idea',due:'',
+        originMomentId:moment.id,originTimestamp:moment.elapsed,
+        source:'Stream highlight'
+      });
+      persist();refreshWorkspace();activateTab('content');notify('Highlight added to Studio');
+    }
+  };
+
   renderContent();renderPromos();updateOverview();activateTab('home');
   setInterval(updateOverview,5000);
 })();
 })();
 </script>
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3"></script>
+<script defer src="./echo-v4.js"></script>
 <script defer src="./echo-cloud.js"></script>
 </body>
 </html>
