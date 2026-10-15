@@ -1,0 +1,24 @@
+/* ECHO identity v2: violet signal / polished steel. Visual-only overrides. */
+:root{--teal:#c69cff;--teal-deep:#412b64;--outline:#544266;--muted:#ada2bb}
+body{background-color:#10091d;background-image:linear-gradient(180deg,#191027 0%,#100c1e 42%,#0d0a17 100%)}
+body:before{background-image:linear-gradient(#9b76cf22 1px,transparent 1px),linear-gradient(90deg,#9b76cf22 1px,transparent 1px)}
+.header{border-color:#654c85;background:linear-gradient(115deg,#291b42,#171326)}
+.header:after{background:repeating-linear-gradient(90deg,#bf8aff 0 30px,transparent 30px 38px,#634b86 38px 58px,transparent 58px 71px)}
+.identity .brand-mark,.identity .brand-mark img{border:0;border-radius:0;background:transparent;box-shadow:none;clip-path:none}
+.identity .brand-mark{width:58px;height:58px;min-width:58px;padding:0;display:grid;place-items:center}
+.identity .brand-mark img{width:58px;height:58px;object-fit:contain;filter:drop-shadow(0 0 7px #8d49d177)}
+.kicker{color:#cfa9ff}
+.nav{border-bottom-color:#4d3967}
+.nav button{background:#21172e;border-color:#4a3a61}
+.nav button.active{background:linear-gradient(120deg,#4f3273,#33244b);border-color:#bb83ff;box-shadow:inset 0 -3px 0 #c397ff;color:#f0dfff}
+.nav button:hover{background:#3b2853}
+.card,.stat,.workspace,.board-item,.cloud-panel{background:linear-gradient(150deg,#211b30,#161523);border-color:#4d3b65}
+.card:before{background:#a478e9}
+.card h2,.stat .value{color:#ecddff}
+.button.primary{background:#543879;border-color:#a982dd;color:#f5eaff}
+.button:hover:not(:disabled){border-color:#b98bff}
+.workspace strong,.moment time{color:#d0adff}
+.timer{color:#eee0ff;text-shadow:0 0 25px #9d54d544}
+.insight-bar{background:#342743}.insight-bar>span{background:linear-gradient(90deg,#8654cb,#d3a6ff)}
+@media(max-width:520px){.identity .brand-mark{width:45px;height:45px;min-width:45px}.identity .brand-mark img{width:45px;height:45px}}
+@media(max-width:370px){.identity .brand-mark{display:grid}}

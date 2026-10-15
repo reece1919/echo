@@ -5,11 +5,17 @@
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#080f15",
-  "theme_color": "#080f15",
+  "background_color": "#10091d",
+  "theme_color": "#140d21",
   "icons": [
     {
-      "src": "favicon.svg?v=1.6.0",
+      "src": "echo-metal-logo.png?v=2.0.0",
+      "sizes": "160x160",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "favicon.svg?v=2.0.0",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
