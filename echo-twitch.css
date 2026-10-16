@@ -1,0 +1,18 @@
+/* ECHO read-only Twitch data feed */
+#twitchIntegration{margin:0 0 13px}
+.tw-toolbar{display:flex;align-items:end;gap:9px;flex-wrap:wrap;margin:12px 0}
+.tw-toolbar label{display:flex;flex-direction:column;gap:5px;min-width:190px;flex:1 1 190px;color:var(--muted)}
+.tw-toolbar .input{width:100%;box-sizing:border-box}
+.tw-status{font-size:12px;line-height:1.5;color:var(--muted);margin:6px 0 10px}
+.tw-details{display:flex;flex-direction:column;gap:6px;font-size:13px}
+.tw-live{display:inline-block;color:var(--muted)}
+.tw-live.on{color:#4de3a7}
+.tw-muted{font-size:12px;color:var(--muted)}
+.tw-media{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
+.tw-media-group{border:1px solid var(--outline);border-radius:12px;padding:12px;min-width:0}
+.tw-media-group h3{font-size:14px;margin:0 0 8px}
+.tw-media-row{display:flex;flex-direction:column;gap:3px;padding:7px 0;border-top:1px solid var(--outline);overflow-wrap:anywhere}
+.tw-media-row:first-of-type{border-top:0}
+.tw-media-row a{font-size:13px}
+.tw-setup-link{font-size:13px}
+@media(max-width:600px){.tw-media{grid-template-columns:1fr}.tw-toolbar .button{flex:1 1 auto}}
