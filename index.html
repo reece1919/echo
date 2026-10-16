@@ -50,6 +50,7 @@
 <link rel="stylesheet" href="signal-theme.css?v=1.1.0">
 <link rel="stylesheet" href="echo-brand.css?v=2.0.0">
   <link rel="stylesheet" href="todoist-system.css?v=1.1.0">
+  <link rel="stylesheet" href="./echo-twitch.css">
 </head>
 <body>
 <main class="shell">
@@ -81,6 +82,19 @@
       </div>
     </div>
     <section class="system-todoist" data-system-todoist="echo" aria-label="ECHO Todoist production tasks"></section>
+    <section id="twitchIntegration" class="card" aria-label="Twitch public data integration">
+      <div class="card-head"><h2>Twitch · Connected data</h2><span class="subtle">Read-only public API · not account authorization</span></div>
+      <p class="quiet">Import live status, available archived broadcasts and recent clips from Twitch. ECHO does not control Twitch or publish content.</p>
+      <div class="tw-toolbar">
+        <label>Channel login<input class="input" id="twChannel" value="controlled_drift" maxlength="25" autocomplete="off"></label>
+        <button type="button" class="button" id="twRefresh">Fetch Twitch data</button>
+        <button type="button" class="button ghost" id="twDisconnect" hidden>Remove tracked channel</button>
+      </div>
+      <p id="twStatus" class="tw-status" role="status" aria-live="polite">Checking Twitch integration…</p>
+      <div id="twDetails" class="tw-details"></div>
+      <div id="twMedia" class="tw-media"></div>
+    </section>
+
     <div class="ops-grid">
       <section class="card"><div class="card-head"><h2>Workspaces</h2></div>
         <div class="workspace-grid">
@@ -467,5 +481,6 @@
 <script defer src="./echo-calendar.js"></script>
 <script defer src="./echo-cloud.js"></script>
 <script defer src="./todoist-system.js?v=1.3.0"></script>
+<script defer src="./echo-twitch.js"></script>
 </body>
 </html>
