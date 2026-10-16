@@ -1,0 +1,41 @@
+name: ECHO integrity checks
+on:
+  pull_request:
+  push:
+    branches: [main, "feature/**"]
+jobs:
+  syntax-and-boundaries:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: JavaScript syntax
+        run: |
+          node --check echo-twitch.js
+          node --check echo-cloud.js
+          node --check echo-v4.js
+          node --check echo-calendar.js
+          node --check todoist-system.js
+      - name: Structural integration checks
+        run: |
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const html = fs.readFileSync('index.html','utf8');
+          const frontend = fs.readFileSync('echo-twitch.js','utf8');
+          const backend = fs.readFileSync('supabase/functions/echo-twitch/index.ts','utf8');
+          for (const id of ['twitchIntegration','twStatus','twChannel','twRefresh','twDisconnect','twDetails','twMedia']) {
+            if (!html.includes('id="' + id + '"')) throw Error('Missing Twitch DOM anchor: ' + id);
+          }
+          if (!html.includes('echo-twitch.js') || !html.includes('echo-twitch.css')) throw Error('Twitch assets not linked');
+          if (!frontend.includes('SUPABASE_URL') || !frontend.includes('new URL(value)')) throw Error('Twitch link URL check missing');
+          if (!backend.includes('auth.getUser(jwt)') || !backend.includes('TWITCH_CLIENT_SECRET')) throw Error('Server auth or backend secret missing');
+          if (frontend.includes('TWITCH_CLIENT_SECRET') || frontend.includes('TWITCH_CLIENT_ID')) throw Error('No developer credentials belong in the browser');
+          const schema = fs.readFileSync('supabase/echo-twitch-readonly.sql','utf8');
+          if (!schema.includes('enable row level security') || !schema.includes('grant select')) throw Error('Owner-protected schema required');
+          NODE
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: TypeScript Edge Function check
+        run: deno check supabase/functions/echo-twitch/index.ts
