@@ -106,6 +106,11 @@ Deno.serve(async (req: Request) => {
       helix("videos", { user_id: profile.id, type: "archive", first: "20" }, bearer),
       helix("clips", { broadcaster_id: profile.id, started_at: thirtyDaysAgo, ended_at: now.toISOString(), first: "30" }, bearer),
     ]);
+    // Switching tracked channels must never mingle media from two different channels.
+    if (existing.channel && existing.channel.broadcaster_id !== profile.id) {
+      const { error: clearError } = await db.from("echo_twitch_media").delete().eq("user_id", userId);
+      if (clearError) throw clearError;
+    }
     const { error: channelError } = await db.from("echo_twitch_channels").upsert({
       user_id: userId, channel_login: profile.login.toLowerCase(), broadcaster_id: profile.id,
       display_name: profile.display_name, profile_image_url: profile.profile_image_url || null,
