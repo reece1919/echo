@@ -5,9 +5,9 @@
   const root = document.getElementById("twitchIntegration");
   if (!root) return;
   const $ = id => document.getElementById(id);
-  const URL = "https://zdurujqwhxqrwbhwzzxg.supabase.co";
+  const SUPABASE_URL = "https://zdurujqwhxqrwbhwzzxg.supabase.co";
   const KEY = "sb_publishable_Xa0DTx_PbvtynbiQN6_xNQ_l1D55vzK";
-  const ENDPOINT = URL + "/functions/v1/echo-twitch";
+  const ENDPOINT = SUPABASE_URL + "/functions/v1/echo-twitch";
   let db = null, busy = false, latest = null;
   const status = $("twStatus"), channel = $("twChannel"), refresh = $("twRefresh");
   const remove = $("twDisconnect"), details = $("twDetails"), media = $("twMedia");
@@ -20,7 +20,7 @@
     if (window.ORBITAuth?.client) return window.ORBITAuth.client;
     if (window.GAIA_CLOUD?.client) return window.GAIA_CLOUD.client;
     if (!db && window.supabase?.createClient) {
-      db = window.supabase.createClient(URL, KEY, {
+      db = window.supabase.createClient(SUPABASE_URL, KEY, {
         auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false, flowType: "pkce" }
       });
     }
